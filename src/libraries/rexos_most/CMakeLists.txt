@@ -25,6 +25,10 @@ LIBRARIES rexos_most
 CATKIN_DEPENDS 
 DEPENDS Boost)
 
+file(GLOB_RECURSE tests "test" "*.cpp" "*.c")
+catkin_add_gtest(rexos_most_test ${tests})
+target_link_libraries(rexos_most_test gtest_main)
+
 file(GLOB_RECURSE sources "src" "*.cpp" "*.c")
 include_directories(include ${catkin_INCLUDE_DIRS})
 add_library(rexos_most ${sources})
