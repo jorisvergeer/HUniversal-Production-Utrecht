@@ -32,15 +32,15 @@
 
 namespace rexos_most{
 	/**
-	 * @ typedef var enum StateType
+	 * @ enum MOSTState
 	 * The enumeration for the states
 	 **/
-	typedef enum{ safe = 0, setup = 1, shutdown = 2, standby = 3, start = 4, stop = 5, normal = 6, nostate = 7 } MOSTState;
+	typedef enum { STATE_SAFE = 0, STATE_SETUP = 1, STATE_SHUTDOWN = 2, STATE_STANDBY = 3, STATE_START = 4, STATE_STOP = 5, STATE_NORMAL = 6, STATE_NOSTATE = 7 } MOSTState;
 
 	/**
 	 * @var const char* const state_txt[]
 	 * The representation of the states in a char array so its easy to print the enum values instead of the integer
 	 **/
-	const char* const MOSTState_txt[] = { "Safe", "Setup", "Shutdown", "Standby", "Start", "Stop", "Normal" };
+	const char* const MOSTState_txt[] = { "Safe", "Setup", "Shutdown", "Standby", "Start", "Stop", "Normal", "no state" };
 }
 #endif
