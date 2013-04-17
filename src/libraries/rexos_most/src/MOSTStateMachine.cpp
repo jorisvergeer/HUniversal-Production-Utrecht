@@ -1,13 +1,13 @@
 /**
  * @file MOSTStateMachine.h
- * @brief Statemachine for MOST in module
- * @date Created: 2013-17-03
+ * @brief MOSTStatemachine Implementation
+ * @date Created: 2013-17-04
  *
  * @author Gerben Boot & Joris Vergeer
  *
  * @section LICENSE
  * License: newBSD
- * Copyright © 2013, HU University of Applied Sciences Utrecht.
+ * Copyright © 2012, HU University of Applied Sciences Utrecht.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -27,50 +27,39 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef MOSTSTATEMACHINE_H
-#define MOSTSTATEMACHINE_H
+#include "rexos_most/MOSTStateMachine.h"
 
-#include "ros/ros.h"
-#include "rexos_most/MOSTState.h"
-#include "rexos_most/MOSTModi.h"
-#include "rexos_most/MOSTTransitions.h"
+using namespace rexos_most;
 
-namespace rexos_most {
-
-class MOSTStateMachine: public MOSTTransitions {
-
-public:
-	MOSTStateMachine(int moduleID);
-
-	virtual ~MOSTStateMachine();
-
-	/**
-	 * Get the state of the statemachine
-	 * @return the currentState of the machine
-	 **/
-	MOSTState getCurrentState();
-
-	MOSTModi getCurrentModi();
-
-	bool changeState(MOSTState newState);
-
-	bool changeModi(MOSTModi newModi);
-
-private:
-	/**
-	 * @var StateType currentState
-	 * The current state of the the state machine
-	 **/
-	MOSTState currentState;
-	int currentModi;
-
-	/**
-	 * @var int moduleID
-	 * The identifier for the module the state machine belongs to
-	 **/
-	int moduleID;
-	int safe;
-};
-
+/**
+ * Create a stateMachine
+ * @param moduleID the unique identifier for the module that implements the statemachine
+ **/
+MOSTStateMachine::MOSTStateMachine(int module) :
+		currentState(safe), currentModi(MODI_NORMAL) {
 }
-#endif
+
+/**
+ * Callback for the requestStateChange topic
+ * Will lookup the transition function and execute it
+ * @param request Contains the params for the state change
+ * @param response Will tell if the state transition was succesfull for the state change
+ **/
+bool MOSTStateMachine::changeState(MOSTState newState) {
+	// decode msg and read variables
+	//ROS_INFO("Request Statechange message received");
+
+	return false;
+}
+
+MOSTState MOSTStateMachine::getCurrentState(){
+	return currentState;
+}
+
+MOSTModi MOSTStateMachine::getCurrentModi(){
+	return currentModi;
+}
+
+bool changeModi(MOSTModi newModi){
+	return false;
+}
