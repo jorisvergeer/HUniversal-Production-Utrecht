@@ -6,6 +6,7 @@
 using namespace rexos_most;
 
 class MockMOSTStateMachine: public MOSTStateMachine {
+public:
 	MockMOSTStateMachine() :
 			MOSTStateMachine(123) {
 	}
