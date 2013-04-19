@@ -62,7 +62,7 @@ private:
 	 * The current state of the the state machine
 	 **/
 	MOSTState currentState;
-	int currentModi;
+	MOSTModi currentModi;
 
 	/**
 	 * @var int moduleID

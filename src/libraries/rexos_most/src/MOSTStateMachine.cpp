@@ -36,7 +36,7 @@ using namespace rexos_most;
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
 MOSTStateMachine::MOSTStateMachine(int module) :
-		currentState(safe), currentModi(MODI_NORMAL) {
+	currentState(safe), currentModi(MODI_NORMAL) {
 }
 
 /**
@@ -61,5 +61,6 @@ MOSTModi MOSTStateMachine::getCurrentModi(){
 }
 
 bool changeModi(MOSTModi newModi){
+
 	return false;
 }
