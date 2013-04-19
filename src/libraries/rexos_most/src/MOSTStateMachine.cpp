@@ -36,7 +36,73 @@ using namespace rexos_most;
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
 MOSTStateMachine::MOSTStateMachine(int module) :
-	currentState(safe), currentModi(MODI_NORMAL) {
+		currentState(STATE_SAFE), currentModi(MODI_NORMAL) {
+	transitionMap[MOSTStatePair(STATE_SAFE, STATE_STANDBY)]= {
+		&MOSTStateMachine::transitionSetup, STATE_SETUP,
+		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN};
+	transitionMap[MOSTStatePair(STATE_STANDBY, STATE_NORMAL)] = {
+		&MOSTStateMachine::transitionStart, STATE_START,
+		&MOSTStateMachine::transitionStop, STATE_STOP};
+	transitionMap[MOSTStatePair(STATE_NORMAL, STATE_STANDBY)] =
+	{	&MOSTStateMachine::transitionStop, STATE_STOP, NULL, STATE_NOSTATE};
+	transitionMap[MOSTStatePair(STATE_STANDBY, STATE_SAFE)]= {
+		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN, NULL,
+		STATE_NOSTATE};
+
+	modiPossibleStates[MODI_NORMAL] = {STATE_NORMAL,STATE_STANDBY,STATE_SAFE};
+	modiPossibleStates[MODI_ERROR] = {STATE_STANDBY,STATE_SAFE};
+	modiPossibleStates[MODI_CRITICAL_ERROR] = {STATE_SAFE};
+	modiPossibleStates[MODI_E_STOP] = {STATE_SAFE};
+
+	std::stringstream ss;
+	ss << "most/" << moduleID << "/change_state";
+	std::string string = ss.str();
+	changeStateService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeStateService,this);
+	changeModiService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeModiService,this);
+}
+
+bool MOSTStateMachine::onChangeStateService(
+		rexos_most::ChangeState::Request &req,
+		rexos_most::ChangeState::Response &res) {
+	switch (req.desiredState) {
+	case STATE_SAFE:
+		res.executed = changeState(STATE_SAFE);
+		break;
+	case STATE_STANDBY:
+		res.executed = changeState(STATE_STANDBY);
+		break;
+	case STATE_NORMAL:
+		res.executed = changeState(STATE_NORMAL);
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool MOSTStateMachine::onChangeModiService(rexos_most::ChangeModi::Request &req,
+		rexos_most::ChangeModi::Response &res) {
+
+	switch (req.desiredModi) {
+	case MODI_NORMAL:
+		res.executed = changeModi(MODI_NORMAL);
+		break;
+	case MODI_SERVICE:
+		res.executed = changeModi(MODI_NORMAL);
+		break;
+	case MODI_ERROR:
+		res.executed = changeModi(MODI_NORMAL);
+		break;
+	case MODI_CRITICAL_ERROR:
+		res.executed = changeModi(MODI_NORMAL);
+		break;
+	case MODI_E_STOP:
+		res.executed = changeModi(MODI_NORMAL);
+		break;
+	default:
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -48,19 +114,55 @@ MOSTStateMachine::MOSTStateMachine(int module) :
 bool MOSTStateMachine::changeState(MOSTState newState) {
 	// decode msg and read variables
 	//ROS_INFO("Request Statechange message received");
+	if (!statePossibleInModi(newState, currentModi))
+		return false;
 
-	return false;
+	transitionMapType::iterator it = transitionMap.find(
+			MOSTStatePair(currentState, newState));
+	if (it == transitionMap.end()) {
+		return false;
+	}
+
+	currentState = it->second.transitionState;
+	if ((this->*it->second.transitionFunctionPointer)()) {
+		currentState = it->first.second;
+	} else {
+		currentState = it->second.abortTransitionState;
+		(this->*it->second.abortTransitionFunctionPointer)();
+		currentState = it->first.first; //previousstate
+	}
+
+	return true;
 }
 
-MOSTState MOSTStateMachine::getCurrentState(){
+MOSTState MOSTStateMachine::getCurrentState() {
 	return currentState;
 }
 
-MOSTModi MOSTStateMachine::getCurrentModi(){
+MOSTModi MOSTStateMachine::getCurrentModi() {
 	return currentModi;
 }
 
-bool changeModi(MOSTModi newModi){
-
+bool MOSTStateMachine::statePossibleInModi(MOSTState state, MOSTModi modi) {
+	std::vector<MOSTState> mostStates = modiPossibleStates[modi];
+	for (int i = 0; i < mostStates.size(); i++) {
+		if (mostStates[i] == state)
+			return true;
+	}
 	return false;
+}
+
+bool MOSTStateMachine::changeModi(MOSTModi newModi) {
+	currentModi = newModi;
+	while (!statePossibleInModi(currentState, currentModi)) {
+		switch (currentState) {
+		case STATE_NORMAL:
+			changeState(STATE_STANDBY);
+			break;
+		case STATE_STANDBY:
+			changeState(STATE_SAFE);
+			break;
+		}
+	}
+	return true;
 }

@@ -35,10 +35,18 @@
 #include "rexos_most/MOSTModi.h"
 #include "rexos_most/MOSTTransitions.h"
 
+#include <rexos_most/ChangeState.h>
+#include <rexos_most/ChangeModi.h>
+
 namespace rexos_most {
 
 class MOSTStateMachine: public MOSTTransitions {
 
+	/**
+	 * @var typedef int (StateMachine::*stateFunctionPtr)()
+	 * Function pointer definition for a state transition function
+	 **/
+	typedef bool (MOSTStateMachine::*stateFunctionPtr)();
 public:
 	MOSTStateMachine(int moduleID);
 
@@ -56,20 +64,59 @@ public:
 
 	bool changeModi(MOSTModi newModi);
 
+	bool statePossibleInModi(MOSTState state, MOSTModi modi);
+
 private:
+	bool onChangeStateService(rexos_most::ChangeState::Request &req, rexos_most::ChangeState::Response &res);
+	bool onChangeModiService(rexos_most::ChangeModi::Request &req, rexos_most::ChangeModi::Response &res);
+
 	/**
-	 * @var StateType currentState
+	 * @var MOSTState currentState
 	 * The current state of the the state machine
 	 **/
 	MOSTState currentState;
+
+	/**
+	 * @var MOSTModi currentModi
+	 * The current modi of the the state machine
+	 **/
 	MOSTModi currentModi;
+
+	/**
+	 * @var map<MOSTModi,MOSTState[]> ModiPossibleStates
+	 * Possible states of all modus
+	 **/
+	std::map<MOSTModi, std::vector<MOSTState> > modiPossibleStates;
+
+	/**
+	 * @var std::map<std::pair<MOSTState,MOSTState>, std::pair<stateFunctionPtr,stateFunctionPtr>> transitionMap;
+	 * key is a pair from src to destination
+	 * value is a pair with:
+	 * the key: functionpointer of the transition
+	 * the value: functionpointer of the transition while abort
+	 **/
+	struct transitionMapEntryValue{
+		stateFunctionPtr transitionFunctionPointer;
+		MOSTState transitionState;
+
+		stateFunctionPtr abortTransitionFunctionPointer;
+		MOSTState abortTransitionState;
+	};
+
+	typedef std::pair<MOSTState,MOSTState> MOSTStatePair;
+	typedef std::pair<MOSTStatePair, transitionMapEntryValue> transitionMapEntry;
+	typedef std::map<MOSTStatePair, transitionMapEntryValue> transitionMapType;
+	transitionMapType transitionMap;
 
 	/**
 	 * @var int moduleID
 	 * The identifier for the module the state machine belongs to
 	 **/
 	int moduleID;
-	int safe;
+
+	ros::NodeHandle nodeHandle;
+	ros::ServiceServer changeStateService;
+	ros::ServiceServer changeModiService;
 };
 
 }

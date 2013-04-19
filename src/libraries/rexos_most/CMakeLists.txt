@@ -9,10 +9,10 @@ find_package(catkin REQUIRED COMPONENTS roscpp message_generation)
 #DIRECTORY msg
 #FILES ${msgs} )
   	
-#file(GLOB_RECURSE srvs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/srv" "*.srv")
-#add_service_files(
-#DIRECTORY srv
-#FILES ${srvs} )
+file(GLOB_RECURSE srvs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/srv" "*.srv")
+add_service_files(
+DIRECTORY srv
+FILES ${srvs} )
 
 generate_messages (
 	DEPENDENCIES std_msgs
@@ -36,6 +36,4 @@ add_library(rexos_most ${sources})
 target_link_libraries(rexos_most ${catkin_LIBRARIES})
 add_dependencies(rexos_most rexos_most_gencpp)
 
-
-
-
+add_definitions("-std=c++11")

@@ -35,7 +35,7 @@ namespace rexos_most{
 	 * @ enum MOSTState
 	 * The enumeration for the states
 	 **/
-	typedef enum { STATE_SAFE = 0, STATE_SETUP = 1, STATE_SHUTDOWN = 2, STATE_STANDBY = 3, STATE_START = 4, STATE_STOP = 5, STATE_NORMAL = 6, STATE_NOSTATE = 7 } MOSTState;
+	typedef enum { STATE_SAFE = 0, STATE_STANDBY = 3, STATE_SETUP = 1, STATE_SHUTDOWN = 2, STATE_START = 4, STATE_STOP = 5, STATE_NORMAL = 6, STATE_NOSTATE = 7 } MOSTState;
 
 	/**
 	 * @var const char* const state_txt[]
