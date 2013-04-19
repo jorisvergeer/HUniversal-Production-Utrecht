@@ -62,14 +62,13 @@ private:
 	 * The current state of the the state machine
 	 **/
 	MOSTState currentState;
-	int currentModi;
+	MOSTModi currentModi;
 
 	/**
 	 * @var int moduleID
 	 * The identifier for the module the state machine belongs to
 	 **/
 	int moduleID;
-	int safe;
 };
 
 }
