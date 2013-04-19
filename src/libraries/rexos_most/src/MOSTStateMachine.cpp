@@ -65,5 +65,6 @@ MOSTModi MOSTStateMachine::getCurrentModi() {
 }
 
 bool changeModi(MOSTModi newModi) {
+
 	return false;
 }
