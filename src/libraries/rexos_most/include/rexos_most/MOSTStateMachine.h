@@ -30,7 +30,9 @@
 #ifndef MOSTSTATEMACHINE_H
 #define MOSTSTATEMACHINE_H
 
-#include "ros/ros.h"
+#include <map>
+#include <vector>
+
 #include "rexos_most/MOSTState.h"
 #include "rexos_most/MOSTModi.h"
 #include "rexos_most/MOSTTransitions.h"
@@ -39,6 +41,11 @@ namespace rexos_most {
 
 class MOSTStateMachine: public MOSTTransitions {
 
+	/**
+	 * @var typedef int (StateMachine::*stateFunctionPtr)()
+	 * Function pointer definition for a state transition function
+	 **/
+	typedef bool (MOSTStateMachine::*stateFunctionPtr)();
 public:
 	MOSTStateMachine(int moduleID);
 
@@ -52,17 +59,52 @@ public:
 
 	MOSTModi getCurrentModi();
 
+	int getModuleID();
+
 	bool changeState(MOSTState newState);
 
 	bool changeModi(MOSTModi newModi);
 
+	bool statePossibleInModi(MOSTState state, MOSTModi modi);
+
 private:
 	/**
-	 * @var StateType currentState
+	 * @var MOSTState currentState
 	 * The current state of the the state machine
 	 **/
 	MOSTState currentState;
+
+	/**
+	 * @var MOSTModi currentModi
+	 * The current modi of the the state machine
+	 **/
 	MOSTModi currentModi;
+
+	/**
+	 * @var map<MOSTModi,MOSTState[]> ModiPossibleStates
+	 * Possible states of all modus
+	 **/
+	std::map<MOSTModi, std::vector<MOSTState> > modiPossibleStates;
+
+	/**
+	 * @var std::map<std::pair<MOSTState,MOSTState>, std::pair<stateFunctionPtr,stateFunctionPtr>> transitionMap;
+	 * key is a pair from src to destination
+	 * value is a pair with:
+	 * the key: functionpointer of the transition
+	 * the value: functionpointer of the transition while abort
+	 **/
+	struct transitionMapEntryValue {
+		stateFunctionPtr transitionFunctionPointer;
+		MOSTState transitionState;
+
+		stateFunctionPtr abortTransitionFunctionPointer;
+		MOSTState abortTransitionState;
+	};
+
+	typedef std::pair<MOSTState, MOSTState> MOSTStatePair;
+	typedef std::pair<MOSTStatePair, transitionMapEntryValue> transitionMapEntry;
+	typedef std::map<MOSTStatePair, transitionMapEntryValue> transitionMapType;
+	transitionMapType transitionMap;
 
 	/**
 	 * @var int moduleID

@@ -29,6 +29,8 @@
 
 #include "rexos_most/MOSTStateMachine.h"
 
+#include <cstdlib>
+
 using namespace rexos_most;
 
 /**
@@ -37,10 +39,25 @@ using namespace rexos_most;
  **/
 MOSTStateMachine::MOSTStateMachine(int moduleID) :
 		currentState(STATE_SAFE), currentModi(MODI_NORMAL), moduleID(moduleID) {
+	transitionMap[MOSTStatePair(STATE_SAFE, STATE_STANDBY)]= {
+		&MOSTStateMachine::transitionSetup, STATE_SETUP,
+		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN};
+	transitionMap[MOSTStatePair(STATE_STANDBY, STATE_NORMAL)] = {
+		&MOSTStateMachine::transitionStart, STATE_START,
+		&MOSTStateMachine::transitionStop, STATE_STOP};
+	transitionMap[MOSTStatePair(STATE_NORMAL, STATE_STANDBY)] =
+	{	&MOSTStateMachine::transitionStop, STATE_STOP, NULL, STATE_NOSTATE};
+	transitionMap[MOSTStatePair(STATE_STANDBY, STATE_SAFE)]= {
+		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN, NULL,
+		STATE_NOSTATE};
+
+	modiPossibleStates[MODI_NORMAL] = {STATE_NORMAL,STATE_STANDBY,STATE_SAFE};
+	modiPossibleStates[MODI_ERROR] = {STATE_STANDBY,STATE_SAFE};
+	modiPossibleStates[MODI_CRITICAL_ERROR] = {STATE_SAFE};
+	modiPossibleStates[MODI_E_STOP] = {STATE_SAFE};
 }
 
 MOSTStateMachine::~MOSTStateMachine() {
-
 }
 
 /**
@@ -52,8 +69,25 @@ MOSTStateMachine::~MOSTStateMachine() {
 bool MOSTStateMachine::changeState(MOSTState newState) {
 	// decode msg and read variables
 	//ROS_INFO("Request Statechange message received");
+	if (!statePossibleInModi(newState, currentModi))
+		return false;
 
-	return false;
+	transitionMapType::iterator it = transitionMap.find(
+			MOSTStatePair(currentState, newState));
+	if (it == transitionMap.end()) {
+		return false;
+	}
+
+	currentState = it->second.transitionState;
+	if ((this->*it->second.transitionFunctionPointer)()) {
+		currentState = it->first.second;
+	} else {
+		currentState = it->second.abortTransitionState;
+		(this->*it->second.abortTransitionFunctionPointer)();
+		currentState = it->first.first; //previousstate
+	}
+
+	return true;
 }
 
 MOSTState MOSTStateMachine::getCurrentState() {
@@ -64,7 +98,30 @@ MOSTModi MOSTStateMachine::getCurrentModi() {
 	return currentModi;
 }
 
-bool changeModi(MOSTModi newModi) {
+int MOSTStateMachine::getModuleID() {
+	return moduleID;
+}
 
+bool MOSTStateMachine::statePossibleInModi(MOSTState state, MOSTModi modi) {
+	std::vector<MOSTState> mostStates = modiPossibleStates[modi];
+	for (int i = 0; i < mostStates.size(); i++) {
+		if (mostStates[i] == state)
+			return true;
+	}
 	return false;
+}
+
+bool MOSTStateMachine::changeModi(MOSTModi newModi) {
+	currentModi = newModi;
+	while (!statePossibleInModi(currentState, currentModi)) {
+		switch (currentState) {
+		case STATE_NORMAL:
+			changeState(STATE_STANDBY);
+			break;
+		case STATE_STANDBY:
+			changeState(STATE_SAFE);
+			break;
+		}
+	}
+	return true;
 }

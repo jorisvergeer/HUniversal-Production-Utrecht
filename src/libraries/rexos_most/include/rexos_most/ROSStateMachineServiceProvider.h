@@ -1,6 +1,6 @@
 /**
- * @file MOSTStates.h
- * @brief MOSTStates for MOST in module
+ * @file ROSStateMachineServiceProvider.h
+ * @brief ROS Services for the MOST State machine
  * @date Created: 2013-17-03
  *
  * @author Gerben Boot & Joris Vergeer
@@ -27,20 +27,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef MOSTSTATES_H
-#define MOSTSTATES_H
+#ifndef ROSSTATEMACHINESERVICEPROVIDER_H
+#define ROSSTATEMACHINESERVICEPROVIDER_H
 
-namespace rexos_most{
-	/**
-	 * @ enum MOSTState
-	 * The enumeration for the states
-	 **/
-	typedef enum { STATE_SAFE = 0, STATE_STANDBY = 3, STATE_SETUP = 1, STATE_SHUTDOWN = 2, STATE_START = 4, STATE_STOP = 5, STATE_NORMAL = 6, STATE_NOSTATE = 7 } MOSTState;
+#include "ros/ros.h"
 
-	/**
-	 * @var const char* const state_txt[]
-	 * The representation of the states in a char array so its easy to print the enum values instead of the integer
-	 **/
-	const char* const MOSTState_txt[] = { "Safe", "Setup", "Shutdown", "Standby", "Start", "Stop", "Normal", "no state" };
+#include "rexos_most/MOSTStateMachine.h"
+
+#include <rexos_most/ChangeState.h>
+#include <rexos_most/ChangeModi.h>
+
+namespace rexos_most {
+
+class ROSStateMachineServiceProvider {
+public:
+	ROSStateMachineServiceProvider(MOSTStateMachine* most);
+
+	virtual ~ROSStateMachineServiceProvider();
+
+private:
+	bool onChangeStateService(rexos_most::ChangeState::Request &req,
+			rexos_most::ChangeState::Response &res);
+	bool onChangeModiService(rexos_most::ChangeModi::Request &req,
+			rexos_most::ChangeModi::Response &res);
+
+	MOSTStateMachine* most;
+
+	ros::NodeHandle nodeHandle;
+	ros::ServiceServer changeStateService;
+	ros::ServiceServer changeModiService;
+};
+
 }
 #endif
