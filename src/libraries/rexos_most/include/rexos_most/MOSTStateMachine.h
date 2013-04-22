@@ -30,7 +30,9 @@
 #ifndef MOSTSTATEMACHINE_H
 #define MOSTSTATEMACHINE_H
 
-#include "ros/ros.h"
+#include <map>
+#include <vector>
+
 #include "rexos_most/MOSTState.h"
 #include "rexos_most/MOSTModi.h"
 #include "rexos_most/MOSTTransitions.h"
@@ -59,6 +61,8 @@ public:
 	MOSTState getCurrentState();
 
 	MOSTModi getCurrentModi();
+
+	int getModuleID();
 
 	bool changeState(MOSTState newState);
 
@@ -95,7 +99,7 @@ private:
 	 * the key: functionpointer of the transition
 	 * the value: functionpointer of the transition while abort
 	 **/
-	struct transitionMapEntryValue{
+	struct transitionMapEntryValue {
 		stateFunctionPtr transitionFunctionPointer;
 		MOSTState transitionState;
 
@@ -103,7 +107,7 @@ private:
 		MOSTState abortTransitionState;
 	};
 
-	typedef std::pair<MOSTState,MOSTState> MOSTStatePair;
+	typedef std::pair<MOSTState, MOSTState> MOSTStatePair;
 	typedef std::pair<MOSTStatePair, transitionMapEntryValue> transitionMapEntry;
 	typedef std::map<MOSTStatePair, transitionMapEntryValue> transitionMapType;
 	transitionMapType transitionMap;
@@ -113,10 +117,6 @@ private:
 	 * The identifier for the module the state machine belongs to
 	 **/
 	int moduleID;
-
-	ros::NodeHandle nodeHandle;
-	ros::ServiceServer changeStateService;
-	ros::ServiceServer changeModiService;
 };
 
 }

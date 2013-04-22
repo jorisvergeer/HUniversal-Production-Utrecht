@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(rexos_most)
 
 ## Find catkin and any catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp message_generation)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg message_generation)
 
 #file(GLOB_RECURSE msgs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/msg" "*.msg")
 #add_message_files(
@@ -27,7 +27,7 @@ DEPENDS Boost)
 
 file(GLOB_RECURSE tests "test" "*.cpp" "*.c")
 catkin_add_gtest(rexos_most_test ${tests})
-target_link_libraries(rexos_most_test gtest_main gmock)
+target_link_libraries(rexos_most_test ${catkin_LIBRARIES} gtest_main gmock)
 
 file(GLOB_RECURSE sources "src/**.c" "src/**.cpp")
 include_directories(include ${catkin_INCLUDE_DIRS})

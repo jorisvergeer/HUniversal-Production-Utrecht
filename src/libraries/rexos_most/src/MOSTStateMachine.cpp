@@ -29,6 +29,8 @@
 
 #include "rexos_most/MOSTStateMachine.h"
 
+#include <cstdlib>
+
 using namespace rexos_most;
 
 /**
@@ -53,59 +55,9 @@ MOSTStateMachine::MOSTStateMachine(int moduleID) :
 	modiPossibleStates[MODI_ERROR] = {STATE_STANDBY,STATE_SAFE};
 	modiPossibleStates[MODI_CRITICAL_ERROR] = {STATE_SAFE};
 	modiPossibleStates[MODI_E_STOP] = {STATE_SAFE};
-
-	std::stringstream ss;
-	ss << "most/" << moduleID << "/change_state";
-	std::string string = ss.str();
-	changeStateService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeStateService,this);
-	changeModiService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeModiService,this);
 }
 
-MOSTStateMachine::~MOSTStateMachine(){
-}
-
-bool MOSTStateMachine::onChangeStateService(
-		rexos_most::ChangeState::Request &req,
-		rexos_most::ChangeState::Response &res) {
-	switch (req.desiredState) {
-	case STATE_SAFE:
-		res.executed = changeState(STATE_SAFE);
-		break;
-	case STATE_STANDBY:
-		res.executed = changeState(STATE_STANDBY);
-		break;
-	case STATE_NORMAL:
-		res.executed = changeState(STATE_NORMAL);
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
-bool MOSTStateMachine::onChangeModiService(rexos_most::ChangeModi::Request &req,
-		rexos_most::ChangeModi::Response &res) {
-
-	switch (req.desiredModi) {
-	case MODI_NORMAL:
-		res.executed = changeModi(MODI_NORMAL);
-		break;
-	case MODI_SERVICE:
-		res.executed = changeModi(MODI_NORMAL);
-		break;
-	case MODI_ERROR:
-		res.executed = changeModi(MODI_NORMAL);
-		break;
-	case MODI_CRITICAL_ERROR:
-		res.executed = changeModi(MODI_NORMAL);
-		break;
-	case MODI_E_STOP:
-		res.executed = changeModi(MODI_NORMAL);
-		break;
-	default:
-		return false;
-	}
-	return true;
+MOSTStateMachine::~MOSTStateMachine() {
 }
 
 /**
@@ -144,6 +96,10 @@ MOSTState MOSTStateMachine::getCurrentState() {
 
 MOSTModi MOSTStateMachine::getCurrentModi() {
 	return currentModi;
+}
+
+int MOSTStateMachine::getModuleID() {
+	return moduleID;
 }
 
 bool MOSTStateMachine::statePossibleInModi(MOSTState state, MOSTModi modi) {
