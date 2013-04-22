@@ -62,10 +62,10 @@ namespace deltaRobotNodeNamespace{
 		DeltaRobotNode(int equipletID, int moduleID);
 		virtual ~DeltaRobotNode();
 		
-		bool transitionSetup();
-		bool transitionShutdown();
-		bool transitionStart();
-		bool transitionStop();
+		virtual bool transitionSetup();
+		virtual bool transitionShutdown();
+		virtual bool transitionStart();
+		virtual bool transitionStop();
 			
 		// Main functions to be called from the services
 		bool calibrate();
