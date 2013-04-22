@@ -1,14 +1,13 @@
 /**
- * @file DummyModuleNode.h
- * @brief A dummy module!
- * @date Created: 2013-03-13
+ * @file ROSStateMachineServiceProvider.h
+ * @brief ROSStateMachineServiceProvider.cpp Implementation
+ * @date Created: 2013-17-04
  *
- * @author Arjen van Zanten
- * @author Ammar Abdulamir
+ * @author Gerben Boot & Joris Vergeer
  *
  * @section LICENSE
  * License: newBSD
- * Copyright © 2013, HU University of Applied Sciences Utrecht.
+ * Copyright © 2012, HU University of Applied Sciences Utrecht.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,45 +27,13 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef DUMMYMODULENODE_H
-#define DUMMYMODULENODE_H
+#include "rexos_most/ROSMOSTStateMachine.h"
 
-#include "ros/ros.h"
-#include "rexos_std_srvs/Module.h"
+using namespace rexos_most;
 
-#include <rexos_utilities/Utilities.h>
-#include <rexos_most/ROSMOSTStateMachine.h>
+ROSMOSTStateMachine::ROSMOSTStateMachine(int moduleID) :
+		MOSTStateMachine(moduleID), serviceProvider(this) {
+}
 
-// GCC system header to suppress libjson warnings
-#pragma GCC system_header
-#include <Libjson/libjson.h>
-// ---------------------------------------------
-
-class DummyModuleNode : public rexos_most::ROSMOSTStateMachine{
-public:
-	DummyModuleNode(int equipletID, int moduleID);
-	virtual ~DummyModuleNode();
-	
-	virtual bool transitionSetup();
-	virtual bool transitionShutdown();
-	virtual bool transitionStart();
-	virtual bool transitionStop();
-
-	// services
-	bool outputJSON(rexos_std_srvs::Module::Request &req, rexos_std_srvs::Module::Response &res);
-
-private:
-	/**
-	 * @var std::string nodeName
-	 * The node's name.
-	 **/
-	 std::string nodeName;
-
-	/**
-	 * @var ros::ServiceServer outputJSON
-	 * Service for outputting coordinates
-	 **/
-	ros::ServiceServer outputJSONService;
-};
-
-#endif
+ROSMOSTStateMachine::~ROSMOSTStateMachine() {
+}

@@ -1,10 +1,9 @@
 /**
- * @file DummyModuleNode.h
- * @brief A dummy module!
- * @date Created: 2013-03-13
+ * @file ROSStateMachineServiceProvider.h
+ * @brief ROS Services with MOST State Machine
+ * @date Created: 2013-17-03
  *
- * @author Arjen van Zanten
- * @author Ammar Abdulamir
+ * @author Gerben Boot & Joris Vergeer
  *
  * @section LICENSE
  * License: newBSD
@@ -28,45 +27,23 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef DUMMYMODULENODE_H
-#define DUMMYMODULENODE_H
+#ifndef ROSMOSTSTATEMACHINE_H
+#define ROSMOSTSTATEMACHINE_H
 
-#include "ros/ros.h"
-#include "rexos_std_srvs/Module.h"
+#include "rexos_most/MOSTStateMachine.h"
+#include "rexos_most/ROSStateMachineServiceProvider.h"
 
-#include <rexos_utilities/Utilities.h>
-#include <rexos_most/ROSMOSTStateMachine.h>
+namespace rexos_most {
 
-// GCC system header to suppress libjson warnings
-#pragma GCC system_header
-#include <Libjson/libjson.h>
-// ---------------------------------------------
-
-class DummyModuleNode : public rexos_most::ROSMOSTStateMachine{
+class ROSMOSTStateMachine : public MOSTStateMachine{
 public:
-	DummyModuleNode(int equipletID, int moduleID);
-	virtual ~DummyModuleNode();
-	
-	virtual bool transitionSetup();
-	virtual bool transitionShutdown();
-	virtual bool transitionStart();
-	virtual bool transitionStop();
+	ROSMOSTStateMachine(int moduleID);
 
-	// services
-	bool outputJSON(rexos_std_srvs::Module::Request &req, rexos_std_srvs::Module::Response &res);
+	virtual ~ROSMOSTStateMachine();
 
 private:
-	/**
-	 * @var std::string nodeName
-	 * The node's name.
-	 **/
-	 std::string nodeName;
-
-	/**
-	 * @var ros::ServiceServer outputJSON
-	 * Service for outputting coordinates
-	 **/
-	ros::ServiceServer outputJSONService;
+	ROSStateMachineServiceProvider serviceProvider;
 };
 
+}
 #endif

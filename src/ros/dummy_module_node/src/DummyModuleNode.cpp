@@ -36,7 +36,7 @@
 // @endcond
 
 DummyModuleNode::DummyModuleNode(int equipletID, int moduleID) :
-		rexos_most::MOSTStateMachine(moduleID) {
+		rexos_most::ROSMOSTStateMachine(moduleID) {
 
 	std::stringstream stringStream;
 	stringStream << NODE_NAME_BASE << "_" << equipletID << "_" << moduleID;
