@@ -39,7 +39,7 @@
 #include <rexos_motor/StepperMotor.h>
 #include <delta_robot_node/Services.h>
 #include <delta_robot_node/Point.h>
-#include <rexos_mast/StateMachine.h>
+#include "rexos_most/ROSMOSTStateMachine.h"
 #include "delta_robot_node/MoveToPoint.h"
 #include "delta_robot_node/MovePath.h"
 #include "delta_robot_node/MoveToRelativePoint.h"
@@ -57,15 +57,15 @@ namespace deltaRobotNodeNamespace{
 	/**
 	 * the DeltaRobotNode which is a StateMachine
 	 **/
-	class DeltaRobotNode : public rexos_mast::StateMachine{
+	class DeltaRobotNode : public rexos_most::ROSMOSTStateMachine{
 	public:
 		DeltaRobotNode(int equipletID, int moduleID);
 		virtual ~DeltaRobotNode();
 		
-		int transitionSetup();
-		int transitionShutdown();
-		int transitionStart();
-		int transitionStop();
+		bool transitionSetup();
+		bool transitionShutdown();
+		bool transitionStart();
+		bool transitionStop();
 			
 		// Main functions to be called from the services
 		bool calibrate();
