@@ -31,9 +31,6 @@
 #pragma once
 
 #include "ros/ros.h"
-#include "rexos_mast/States.h"
-#include "rexos_mast/State.h"
-#include "rexos_mast/ModuleError.h"
 #include "lookup_handler/LookupServer.h"
 
 #include <string>
@@ -43,7 +40,6 @@
 #include <cstdio>
 #include <unistd.h>
 #include <algorithm> 
-#include <equiplet_node/HardwareModuleProperties.h>
 #include <rexos_blackboard_cpp_client/BlackboardCppClient.h>
 #include <rexos_blackboard_cpp_client/BlackboardSubscriber.h>
 #include <rexos_std_srvs/Module.h>
@@ -60,16 +56,7 @@ public:
 	EquipletNode(int id = 1);
 	virtual ~EquipletNode();
 	void blackboardReadCallback(std::string json);
-	bool addHardwareModule(HardwareModuleProperties module);
-	bool removeHardwareModule(int id);
-	void updateOperationState();
-	void updateSafetyState();
-	bool updateModuleState(int moduleID, rexos_mast::StateType state);
-	void printHardwareModules();
-	bool stateChanged(rexos_mast::StateUpdate::Request &request, rexos_mast::StateUpdate::Response &response);
-	bool moduleError(rexos_mast::ErrorInModule::Request &request, rexos_mast::ErrorInModule::Response &response);
-	void sendStateChangeRequest(int moduleID, rexos_mast::StateType newState);
-	rexos_mast::StateType getModuleState(int moduleID);
+
 	void callLookupHandler(std::string lookupType, std::string lookupID, environment_communication_msgs::Map payload);
 private:
 	/**
@@ -77,39 +64,7 @@ private:
 	 * The id of the equiplet
 	 **/
 	int equipletId;
-	/**
-	 * @var Mast::state operationState
-	 * The minimal operation state is equal to the lowest state of all modules that are actors
-	 **/
-	rexos_mast::StateType operationState;
-	/**
-	 * @var Mast::state safetyState
-	 * The safety state of the Equiplet. This is equal to the highest state of the actor modules
-	 **/
-	rexos_mast::StateType safetyState;
-	/**
-	 * @var std::vector<Mast::HardwareModuleProperties> moduleTable
-	 * The table that holds all information about the modules currently attached to this Equiplet
-	 **/
-	std::vector<HardwareModuleProperties> moduleTable;
-	/**
-	 * @var ros::ServiceServer moduleErrorService
-	 * Decides what needs to happen when a error occurs inside a module
-	 **/
-	ros::ServiceServer moduleErrorService; 
-	/**
-	 * @var ros::ServiceServer stateUpdateService;
-	 * Will receive state changed messages from modules
-	 **/
-	ros::ServiceServer stateUpdateService;
-	/**
-	 * @var std::map<int, pair> modulePackageNodeMap
-	 * A map with the moduleType as key and a pair of package name and node name as value.
-	 * This is used to find the name of the node that has to be started when a
-	 * module is added, and the package name where the node can be find. This is a TEMPORARY!!
-	 * solution. Better is to store this in some kind of database.
-	 **/
-	std::map<int, std::pair< std::string, std::string> > modulePackageNodeMap;
+
 	/**
 	 * @var BlackboardCppClient  *blackboardClient
 	 * Client to read from blackboard

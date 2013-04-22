@@ -4,10 +4,10 @@ project(rexos_most)
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg message_generation)
 
-#file(GLOB_RECURSE msgs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/msg" "*.msg")
-#add_message_files(
-#DIRECTORY msg
-#FILES ${msgs} )
+file(GLOB_RECURSE msgs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/msg" "*.msg")
+add_message_files(
+DIRECTORY msg
+FILES ${msgs} )
   	
 file(GLOB_RECURSE srvs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/srv" "*.srv")
 add_service_files(
