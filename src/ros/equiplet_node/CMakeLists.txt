@@ -15,7 +15,7 @@ DEPENDS)
 
 file(GLOB_RECURSE sources "src" "*.cpp" "*.c")
 include_directories(include ${catkin_INCLUDE_DIRS} ${LOG4CXX_INCLUDE_DIR})
-add_executable(equiplet_node src/EquipletNode.cpp)
+add_executable(equiplet_node src/EquipletNode.cpp src/EquipletNodeMain.cpp)
 
 
 target_link_libraries(equiplet_node ${catkin_LIBRARIES} ${LOG4CXX_LIBRARIES})

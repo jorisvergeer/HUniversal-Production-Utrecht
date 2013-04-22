@@ -1,9 +1,9 @@
 /**
- * @file EquipletNode.h
- * @brief Symbolizes an entire EquipletNode.
+ * @file EquipletNode.cpp
+ * @brief Main for EquipletNode
  * @date Created: 2012-10-12
  *
- * @author Dennis Koole
+ * @author Joris Vergeer
  *
  * @section LICENSE
  * License: newBSD
@@ -28,48 +28,46 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#pragma once
+#include <equiplet_node/EquipletNode.h>
 
-#include "ros/ros.h"
-#include "lookup_handler/LookupServer.h"
+int main(int argc, char **argv) {
 
-#include <string>
-#include <vector>
+	// Check if an equiplet id is given at the command line
+	int equipletId = 1;
+	if (argc != 2 || rexos_utilities::stringToInt(equipletId, argv[1]) != 0) {
+		std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" << std::endl;
+	}
 
-#include <rexos_blackboard_cpp_client/BlackboardCppClient.h>
-#include <rexos_blackboard_cpp_client/BlackboardSubscriber.h>
-#include <rexos_utilities/Utilities.h>
+	std::vector<int> moduleIDs;
+	for(int i = 0; i < argc; i++)
+	{
+		switch(i){
+		case 0:
+			break;
+		case 1:
+			rexos_utilities::stringToInt(equipletId, argv[i]);
+			break;
+		default:
+			int moduleID = -1;
+			rexos_utilities::stringToInt(moduleID, argv[i]);
+			moduleIDs.push_back(moduleID);
+			break;
+		}
+	}
 
-#include <rexos_most/ModuleInfo.h>
-#include <rexos_most/MOSTState.h>
+	// Set the id of the Equiplet
+	std::ostringstream ss;
+	ss << "Equiplet" << equipletId;
+	const char* equipletName = ss.str().c_str();
 
-#pragma GCC system_header
-#include <Libjson/libjson.h>
+	ros::init(argc, argv, equipletName);
+	EquipletNode equipletNode(equipletId);
 
-/**
- * The equipletNode, will manage all modules and keep track of their states
- **/
-class EquipletNode: BlackboardSubscriber {
-public:
-	EquipletNode(int id = 1);
-	virtual ~EquipletNode();
-	void blackboardReadCallback(std::string json);
+	ros::Rate poll_rate(10);
+	while (ros::ok()) {
+		poll_rate.sleep();
+		ros::spinOnce();
+	}
 
-private:
-	void callLookupHandler(std::string lookupType, std::string lookupID, environment_communication_msgs::Map payload);
-	void moduleInfoTopicCallback(const rexos_most::ModuleInfo& msg);
-	/**
-	 * @var int equipletId
-	 * The id of the equiplet
-	 **/
-	int equipletId;
-
-	/**
-	 * @var BlackboardCppClient  *blackboardClient
-	 * Client to read from blackboard
-	 **/
-	BlackboardCppClient *blackboardClient;
-
-	ros::NodeHandle nh;
-	ros::Subscriber moduleInfoTopicSubscriber;
-};
+	return 0;
+}

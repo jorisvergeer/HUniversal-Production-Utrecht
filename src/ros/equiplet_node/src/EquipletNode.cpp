@@ -37,6 +37,8 @@
 EquipletNode::EquipletNode(int id) :
 		equipletId(id), blackboardClient(NULL) {
 
+	moduleInfoTopicSubscriber = nh.subscribe("/most/equiplet/moduleInfo", 1000, &EquipletNode::moduleInfoTopicCallback, this);
+
 	blackboardClient = new BlackboardCppClient("localhost", "REXOS", "blackboard", this);
 	blackboardClient->subscribe("instruction");
 
@@ -101,30 +103,8 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
 		ROS_ERROR("Error in calling lookupHandler/lookup service");
 	}
 }
-/** 
- * Main that creates the equipletNode and adds hardware modules
- **/
-int main(int argc, char **argv) {
 
-	// Check if an equiplet id is given at the command line	 
-	int equipletId = 1;
-	if (argc != 2 || rexos_utilities::stringToInt(equipletId, argv[1]) != 0) {
-		std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" << std::endl;
-	}
-
-	// Set the id of the Equiplet
-	std::ostringstream ss;
-	ss << "Equiplet" << equipletId;
-	const char* equipletName = ss.str().c_str();
-
-	ros::init(argc, argv, equipletName);
-	EquipletNode equipletNode(equipletId);
-
-	ros::Rate poll_rate(10);
-	while (ros::ok()) {
-		poll_rate.sleep();
-		ros::spinOnce();
-	}
-
-	return 0;
+void EquipletNode::moduleInfoTopicCallback(const rexos_most::ModuleInfo& msg) {
+	ROS_INFO("Received module update (id=%d, state=%s)", msg.id, rexos_most::MOSTState_txt[msg.state]);
 }
+
