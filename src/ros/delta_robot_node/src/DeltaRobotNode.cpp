@@ -51,7 +51,7 @@
  * @param equipletID identifier for the equiplet
  * @param moduleID identifier for the deltarobot
  **/
-deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int equipletID, int moduleID) : 
+deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int moduleID) :
 	rexos_most::ROSMOSTStateMachine(moduleID),
 	deltaRobot(NULL),
 	modbus(NULL),
@@ -67,8 +67,6 @@ deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int equipletID, int modu
 	moveRelativePathService_json(),
 	calibrateService_json(){
 	ROS_INFO("DeltaRobotnode Constructor entering...");
-
-	ros::NodeHandle nodeHandle;
 
 	// Advertise the old deprecated services
 	moveToPointService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_old, this);

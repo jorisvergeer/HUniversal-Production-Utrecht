@@ -59,13 +59,13 @@ namespace deltaRobotNodeNamespace{
 	 **/
 	class DeltaRobotNode : public rexos_most::ROSMOSTStateMachine{
 	public:
-		DeltaRobotNode(int equipletID, int moduleID);
+		DeltaRobotNode(int moduleID);
 		virtual ~DeltaRobotNode();
 		
-		bool transitionSetup();
-		bool transitionShutdown();
-		bool transitionStart();
-		bool transitionStop();
+		virtual bool transitionSetup();
+		virtual bool transitionShutdown();
+		virtual bool transitionStart();
+		virtual bool transitionStop();
 			
 		// Main functions to be called from the services
 		bool calibrate();
@@ -90,6 +90,8 @@ namespace deltaRobotNodeNamespace{
 		Point *parsePointArray(std::string json, int & size);
 
 	private:
+		ros::NodeHandle nodeHandle;
+
 		/**
 		 * @var DeltaRobot::DeltaRobot * deltaRobot
 		 * the deltaRobot
