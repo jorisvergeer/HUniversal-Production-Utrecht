@@ -35,8 +35,8 @@ using namespace rexos_most;
  * Create a stateMachine
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
-MOSTStateMachine::MOSTStateMachine(int module) :
-		currentState(STATE_SAFE), currentModi(MODI_NORMAL) {
+MOSTStateMachine::MOSTStateMachine(int moduleID) :
+		currentState(STATE_SAFE), currentModi(MODI_NORMAL), moduleID(moduleID) {
 	transitionMap[MOSTStatePair(STATE_SAFE, STATE_STANDBY)]= {
 		&MOSTStateMachine::transitionSetup, STATE_SETUP,
 		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN};
@@ -59,6 +59,9 @@ MOSTStateMachine::MOSTStateMachine(int module) :
 	std::string string = ss.str();
 	changeStateService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeStateService,this);
 	changeModiService = nodeHandle.advertiseService(string, &MOSTStateMachine::onChangeModiService,this);
+}
+
+MOSTStateMachine::~MOSTStateMachine(){
 }
 
 bool MOSTStateMachine::onChangeStateService(

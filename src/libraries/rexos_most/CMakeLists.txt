@@ -29,8 +29,9 @@ file(GLOB_RECURSE tests "test" "*.cpp" "*.c")
 catkin_add_gtest(rexos_most_test ${tests})
 target_link_libraries(rexos_most_test gtest_main gmock)
 
-file(GLOB_RECURSE sources "src" "*.cpp" "*.c")
+file(GLOB_RECURSE sources "src/**.c" "src/**.cpp")
 include_directories(include ${catkin_INCLUDE_DIRS})
+message(STATUS "sources: ${sources}")
 add_library(rexos_most ${sources})
 
 target_link_libraries(rexos_most ${catkin_LIBRARIES})

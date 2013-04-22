@@ -30,13 +30,18 @@
 #ifndef MOSTTRANSITIONS_H
 #define MOSTTRANSITIONS_H
 
-namespace rexos_most{
-    class MOSTTransitions{
-    protected:
-        virtual bool transitionStart() = 0;
-        virtual bool transitionStop() = 0;
-        virtual bool transitionSetup() = 0;
-        virtual bool transitionShutdown() = 0;
-    };
+namespace rexos_most {
+
+class MOSTTransitions {
+public:
+	virtual ~MOSTTransitions() {
+	}
+protected:
+	virtual bool transitionStart() = 0;
+	virtual bool transitionStop() = 0;
+	virtual bool transitionSetup() = 0;
+	virtual bool transitionShutdown() = 0;
+};
+
 }
 #endif
