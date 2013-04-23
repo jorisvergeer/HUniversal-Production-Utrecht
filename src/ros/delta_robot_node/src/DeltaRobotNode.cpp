@@ -647,7 +647,7 @@ int main(int argc, char **argv){
 
 	ROS_INFO("Creating DeltaRobotNode");
 
-	deltaRobotNodeNamespace::DeltaRobotNode drn(equipletID, moduleID);
+	deltaRobotNodeNamespace::DeltaRobotNode drn(moduleID);
 
 	ROS_INFO("Running StateEngine");
 	ros::spin();
