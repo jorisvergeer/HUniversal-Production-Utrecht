@@ -77,9 +77,6 @@ private:
 	void _setModi(MOSTModi state);
 	void _forceToAllowedState();
 
-	bool onChangeStateService(rexos_most::ChangeState::Request &req, rexos_most::ChangeState::Response &res);
-	bool onChangeModiService(rexos_most::ChangeModi::Request &req, rexos_most::ChangeModi::Response &res);
-
 	MOSTListener* mostListener;
 
 	/**

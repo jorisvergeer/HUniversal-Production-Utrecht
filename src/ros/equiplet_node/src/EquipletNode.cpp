@@ -29,6 +29,7 @@
  **/
 
 #include <equiplet_node/EquipletNode.h>
+#include <rexos_most/ChangeState.h>
 
 /**
  * Create a new EquipletNode
@@ -43,9 +44,12 @@ EquipletNode::EquipletNode(int id) :
 	mostDatabaseclient.clearModuleData();
 	mostDatabaseclient.setSafetyState(rexos_most::STATE_SAFE);
 
-	moduleUpdateServiceServer = nh.advertiseService("/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService, this);
+	moduleUpdateServiceServer = nh.advertiseService(
+			"/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService,
+			this);
 
-	blackboardClient = new BlackboardCppClient("localhost", "REXOS", "blackboard", this);
+	blackboardClient = new BlackboardCppClient("localhost", "REXOS",
+			"blackboard", this);
 	blackboardClient->subscribe("instruction");
 
 	std::cout << "Connected!" << std::endl;
@@ -94,14 +98,16 @@ void EquipletNode::blackboardReadCallback(std::string json) {
  * @param lookupID the ID of the lookup
  * @param payload the payload, contains data that will get combined with environmentcache data
  **/
-void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupID, environment_communication_msgs::Map payload) {
+void EquipletNode::callLookupHandler(std::string lookupType,
+		std::string lookupID, environment_communication_msgs::Map payload) {
 	lookup_handler::LookupServer msg;
 	msg.request.lookupMsg.lookupType = lookupType;
 	msg.request.lookupMsg.lookupID = lookupID;
 	msg.request.lookupMsg.payLoad = payload;
 
 	ros::NodeHandle nodeHandle;
-	ros::ServiceClient lookupClient = nodeHandle.serviceClient<lookup_handler::LookupServer>("LookupHandler/lookup");
+	ros::ServiceClient lookupClient = nodeHandle.serviceClient<
+			lookup_handler::LookupServer>("LookupHandler/lookup");
 	if (lookupClient.call(msg)) {
 		// TODO
 		// Read message
@@ -110,8 +116,28 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
 	}
 }
 
-bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req, rexos_most::ModuleUpdate::Response& res) {
-	ROS_INFO("Received module update (id=%d, state=%s)", req.info.id, rexos_most::MOSTState_txt[req.info.state]);
+bool EquipletNode::transitionSetup() {
+	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
+	for (int i = 0; i < moduleData.size(); i++) {
+		rexos_most::ChangeState::Request req;
+		rexos_most::ChangeState::Response res;
+		std::stringstream ss;
+		ss << "/most/" << moduleData[i].id << "/changeState";
+		if(!(nh.serviceClient<rexos_most::ChangeState>(
+				ss.str()).call(req, res)) ||
+				!res.executed)
+		{
+			//Module isn't possible to set standby (error)
+		}
+
+	}
+	return false;
+}
+
+bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
+		rexos_most::ModuleUpdate::Response& res) {
+	ROS_INFO("Received module update (id=%d, state=%s)", req.info.id,
+			rexos_most::MOSTState_txt[req.info.state]);
 	MOSTDatabaseClient::ModuleData data;
 	data.id = req.info.id;
 	data.state = req.info.state;
@@ -149,4 +175,3 @@ bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req, r
 
 	return true;
 }
-

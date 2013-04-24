@@ -76,4 +76,6 @@ private:
 
 	ros::NodeHandle nh;
 	ros::ServiceServer moduleUpdateServiceServer;
+
+	bool transitionSetup();
 };
