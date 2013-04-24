@@ -41,6 +41,10 @@ public:
 		connection.connect(MONGODB_HOST);
 	}
 
+	void setSafetyState(rexos_most::MOSTState state){
+		connection.update("most.equiplet", mongo::Query(), BSON("$set" << BSON("safety" << state)));
+	}
+
 	ModuleData getModuleData(int moduleID) {
 		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules", QUERY("id" << moduleID));
 		if(cursor->more()) {
