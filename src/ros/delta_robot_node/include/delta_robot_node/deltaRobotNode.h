@@ -164,6 +164,9 @@ namespace deltaRobotNodeNamespace{
 		 * Service for receiving calibrate commands
 		 **/
 		ros::ServiceServer calibrateService_json;
+
+		void startServices();
+		void stopServices();
 	};
 }
 #endif
