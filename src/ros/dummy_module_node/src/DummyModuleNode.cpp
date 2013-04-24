@@ -65,25 +65,25 @@ bool DummyModuleNode::outputJSON(rexos_std_srvs::Module::Request &req, rexos_std
 bool DummyModuleNode::transitionSetup() {
 	ROS_INFO("Setup transition called");
 
-	return 0;
+	return 1;
 }
 
 bool DummyModuleNode::transitionShutdown() {
 	ROS_INFO("Shutdown transition called");
 
-	return 0;
+	return 1;
 }
 
 bool DummyModuleNode::transitionStart() {
 	ROS_INFO("Start transition called");
 
-	return 0;
+	return 1;
 }
 
 bool DummyModuleNode::transitionStop() {
 	ROS_INFO("Stop transition called");
 
-	return 0;
+	return 1;
 }
 
 DummyModuleNode::~DummyModuleNode() {

@@ -73,8 +73,7 @@ bool MOSTStateMachine::changeState(MOSTState newState) {
 	if (!statePossibleInModi(newState, currentModi))
 		return false;
 
-	transitionMapType::iterator it = transitionMap.find(
-			MOSTStatePair(currentState, newState));
+	transitionMapType::iterator it = transitionMap.find(MOSTStatePair(currentState, newState));
 	if (it == transitionMap.end()) {
 		return false;
 	}
@@ -87,6 +86,8 @@ bool MOSTStateMachine::changeState(MOSTState newState) {
 		(this->*it->second.abortTransitionFunctionPointer)();
 		_setState(it->first.first); //previousstate
 	}
+
+	_forceToAllowedState();
 
 	return true;
 }
@@ -114,6 +115,11 @@ bool MOSTStateMachine::statePossibleInModi(MOSTState state, MOSTModi modi) {
 
 bool MOSTStateMachine::changeModi(MOSTModi newModi) {
 	_setModi(newModi);
+	_forceToAllowedState();
+	return true;
+}
+
+void MOSTStateMachine::_forceToAllowedState() {
 	while (!statePossibleInModi(currentState, currentModi)) {
 		switch (currentState) {
 		case STATE_NORMAL:
@@ -124,23 +130,22 @@ bool MOSTStateMachine::changeModi(MOSTModi newModi) {
 			break;
 		}
 	}
-	return true;
 }
 
 void MOSTStateMachine::setMostListener(MOSTListener* listener) {
 	mostListener = listener;
 }
 
-void MOSTStateMachine::_setState(MOSTState state){
+void MOSTStateMachine::_setState(MOSTState state) {
 	currentState = state;
-	if(mostListener != NULL){
+	if (mostListener != NULL) {
 		mostListener->onMOSTStateChanged();
 	}
 }
 
-void MOSTStateMachine::_setModi(MOSTModi modi){
+void MOSTStateMachine::_setModi(MOSTModi modi) {
 	currentModi = modi;
-	if(mostListener != NULL){
+	if (mostListener != NULL) {
 		mostListener->onMOSTModiChanged();
 	}
 }
