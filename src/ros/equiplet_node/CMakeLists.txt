@@ -21,4 +21,5 @@ add_executable(equiplet_node src/EquipletNode.cpp src/EquipletNodeMain.cpp)
 target_link_libraries(equiplet_node ${catkin_LIBRARIES} ${LOG4CXX_LIBRARIES})
 
 
+add_definitions("-std=c++11")
 

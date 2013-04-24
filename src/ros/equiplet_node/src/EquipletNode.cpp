@@ -37,10 +37,11 @@
 EquipletNode::EquipletNode(int id) :
 		equipletId(id), blackboardClient(NULL) {
 
-	if(mostDatabaseclient.getAllModuleData().size() > 0){
+	if (mostDatabaseclient.getAllModuleData().size() > 0) {
 		ROS_WARN("Previous equiplet instance did not cleanup corrrectly");
 	}
 	mostDatabaseclient.clearModuleData();
+	mostDatabaseclient.setSafetyState(rexos_most::STATE_SAFE);
 
 	moduleUpdateServiceServer = nh.advertiseService("/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService, this);
 
@@ -116,6 +117,36 @@ bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req, r
 	data.state = req.info.state;
 	data.modi = req.info.modi;
 	mostDatabaseclient.setModuleData(data);
+
+	rexos_most::MOSTState safetyState = rexos_most::STATE_SAFE;
+	auto moduleDatas = mostDatabaseclient.getAllModuleData();
+	for (auto it = moduleDatas.begin(); it != moduleDatas.end(); it++) {
+		rexos_most::MOSTState modState = (rexos_most::MOSTState) it->state;
+		rexos_most::MOSTState roundedState;
+		switch (modState) {
+		case rexos_most::STATE_SAFE:
+			roundedState = rexos_most::STATE_SAFE;
+			break;
+		case rexos_most::STATE_SETUP:
+		case rexos_most::STATE_SHUTDOWN:
+		case rexos_most::STATE_STANDBY:
+			roundedState = rexos_most::STATE_STANDBY;
+			break;
+		case rexos_most::STATE_START:
+		case rexos_most::STATE_STOP:
+		case rexos_most::STATE_NORMAL:
+			roundedState = rexos_most::STATE_NORMAL;
+		}
+
+		if(roundedState > safetyState){
+			safetyState = roundedState;
+		}
+
+		mostDatabaseclient.setSafetyState(safetyState);
+	}
+
+
+
 	return true;
 }
 
