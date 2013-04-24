@@ -47,19 +47,24 @@
 #include <rexos_vision/FiducialDetector.h>
 #include <rexos_vision/PixelAndRealCoordinateTransformer.h>
 #include <rexos_vision/CrateTracker.h>
+#include "rexos_most/ROSMOSTStateMachine.h"
 
 #include <crate_locator_node/getCrate.h>
 #include <crate_locator_node/getAllCrates.h>
 #include <crate_locator_node/CrateEventMsg.h>
 
-
 /**
  * Locates the crate
  **/
-class CrateLocatorNode{
+class CrateLocatorNode : public rexos_most::ROSMOSTStateMachine{
 public:
-	CrateLocatorNode();
+	CrateLocatorNode(int moduleID);
 	~CrateLocatorNode();
+
+	virtual bool transitionSetup();
+	virtual bool transitionShutdown();
+	virtual bool transitionStart();
+	virtual bool transitionStop();
 
 	void run();
 	bool getCrate(crate_locator_node::getCrate::Request &req,crate_locator_node::getCrate::Response &res);
@@ -176,4 +181,6 @@ private:
 	bool calibrate(unsigned int measurements = 100, unsigned int maxErrors = 100);
 	void calibrateCallback(const sensor_msgs::ImageConstPtr& msg);
 	void crateLocateCallback(const sensor_msgs::ImageConstPtr& msg);
+	void startServices();
+	void stopServices();
 };

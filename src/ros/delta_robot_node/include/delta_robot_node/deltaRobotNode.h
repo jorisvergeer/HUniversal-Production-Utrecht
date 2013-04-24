@@ -90,6 +90,10 @@ namespace deltaRobotNodeNamespace{
 		Point *parsePointArray(std::string json, int & size);
 
 	private:
+		/**
+		 * @var ros::NodeHandle node
+		 * The nodeHandle used by ros services and topics
+		 **/
 		ros::NodeHandle nodeHandle;
 
 		/**

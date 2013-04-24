@@ -68,7 +68,13 @@ void on_mouse(int event, int x, int y, int flags, void* param){
 /**
  * Subscribes to the camera node, starts the QR detector and opens a window to show the output.
  **/
-CrateLocatorNode::CrateLocatorNode() : measurementCount(0), measurements(0), failCount(0), imageTransport(node){
+CrateLocatorNode::CrateLocatorNode(int moduleID) :
+		rexos_most::ROSMOSTStateMachine(moduleID),
+		measurementCount(0),
+		measurements(0),
+		failCount(0),
+		imageTransport(node)
+{
 	// Setup the QR detector
 	qrDetector = new rexos_vision::QRCodeDetector();
 
@@ -103,10 +109,7 @@ CrateLocatorNode::CrateLocatorNode() : measurementCount(0), measurements(0), fai
 	int numberOfStableFrames = 5;
 	crateTracker = new rexos_vision::CrateTracker(numberOfStableFrames, crateMovementThreshold);
 
-	// ROS services and topics
 	crateEventPublisher = node.advertise<crate_locator_node::CrateEventMsg>(CrateLocatorNodeTopics::CRATE_EVENT, 100);
-	getCrateService = node.advertiseService(CrateLocatorNodeServices::GET_CRATE, &CrateLocatorNode::getCrate, this);
-	getAllCratesService = node.advertiseService(CrateLocatorNodeServices::GET_ALL_CRATES, &CrateLocatorNode::getAllCrates, this);
 
 	// Opencv GUI
 	cv::namedWindow(WINDOW_NAME);
@@ -374,31 +377,81 @@ void CrateLocatorNode::crateLocateCallback(const sensor_msgs::ImageConstPtr& msg
  * This function ends when ros receives a ^c
  **/
 void CrateLocatorNode::run(){
-	// Run initial calibration. If that fails, this node will shut down.
-	if(!calibrate()){
-		ros::shutdown();
-	} else{
-		// Shutdown is not immediately exiting the program. This caused to run the these statements if they were not in the else...
-
-		std::cout << "[DEBUG] Waiting for subscription" << std::endl;
-		// Subscribe example: (poorly documented on ros wiki)
-		// Images are transported in JPEG format to decrease tranfer time per image.
-		// imageTransport.subscribe(<base image topic>, <queue_size>, <callback>, <tracked object>, <TransportHints(<transport type>)>)
-		cameraSubscriber = imageTransport.subscribe("camera/image", 1, &CrateLocatorNode::crateLocateCallback, this, image_transport::TransportHints("compressed"));
-		std::cout << "[DEBUG] Starting crateLocateCallback loop" << std::endl;
-
-		while(ros::ok()){
-			ros::spinOnce();
-		}
+	while(ros::ok()){
+		ros::spinOnce();
 	}
 }
 
+/**
+ * Start the service servers of the module to make it able to perform tasks.
+ */
+void CrateLocatorNode::startServices(){
+	// ROS services and topics
+	getCrateService = node.advertiseService(CrateLocatorNodeServices::GET_CRATE, &CrateLocatorNode::getCrate, this);
+	getAllCratesService = node.advertiseService(CrateLocatorNodeServices::GET_ALL_CRATES, &CrateLocatorNode::getAllCrates, this);
+}
+
+/**
+ * Shutdown the service servers
+ */
+void CrateLocatorNode::stopServices(){
+	getCrateService.shutdown();
+	getAllCratesService.shutdown();
+}
+
+/**
+ * Transition from Safe to Standby state
+ * @return 0 if everything went OK else error
+ **/
+bool CrateLocatorNode::transitionSetup(){
+	ROS_INFO("Setup transition called");
+	return calibrate();
+}
+
+/**
+ * Transition from Standby to Safe state
+ * Will turn power off the motor
+ * @return will be 0 if everything went ok else error
+ **/
+bool CrateLocatorNode::transitionShutdown(){
+	ROS_INFO("Shutdown transition called");
+	return false;
+}
+
+/**
+ * Transition from Standby to Normal state
+ * @return will be 0 if everything went ok else error
+ **/
+bool CrateLocatorNode::transitionStart(){
+	ROS_INFO("Start transition called");
+
+	std::cout << "[DEBUG] Waiting for subscription" << std::endl;
+	// Subscribe example: (poorly documented on ros wiki)
+	// Images are transported in JPEG format to decrease tranfer time per image.
+	// imageTransport.subscribe(<base image topic>, <queue_size>, <callback>, <tracked object>, <TransportHints(<transport type>)>)
+	cameraSubscriber = imageTransport.subscribe("camera/image", 1, &CrateLocatorNode::crateLocateCallback, this, image_transport::TransportHints("compressed"));
+	std::cout << "[DEBUG] Starting crateLocateCallback loop" << std::endl;
+
+	startServices();
+	return true;
+}
+
+/**
+ * Transition from Normal to Standby state
+ * @return will be 0 if everything went ok else error
+ **/
+bool CrateLocatorNode::transitionStop(){
+	ROS_INFO("Stop transition called");
+	cameraSubscriber.shutdown();
+	stopServices();
+	return true;
+}
 /**
  * Main methods that starts the cratelocator node.
  **/
 int main(int argc, char* argv[]){
 	ros::init(argc, argv, "crateLocator");
-	CrateLocatorNode crateLocatorNode;
+	CrateLocatorNode crateLocatorNode(999);
 	crateLocatorNode.run();
 
 	return 0;
