@@ -39,11 +39,14 @@
 
 namespace rexos_most {
 
-class ROSStateMachineServiceProvider {
+class ROSStateMachineServiceProvider : public MOSTStateMachine::MOSTListener{
 public:
 	ROSStateMachineServiceProvider(MOSTStateMachine* most);
 
 	virtual ~ROSStateMachineServiceProvider();
+
+	virtual void onMOSTStateChanged();
+	virtual void onMOSTModiChanged();
 
 private:
 	bool onChangeStateService(rexos_most::ChangeState::Request &req,
@@ -51,11 +54,14 @@ private:
 	bool onChangeModiService(rexos_most::ChangeModi::Request &req,
 			rexos_most::ChangeModi::Response &res);
 
+	void notifyEquiplet();
+
 	MOSTStateMachine* most;
 
 	ros::NodeHandle nodeHandle;
 	ros::ServiceServer changeStateService;
 	ros::ServiceServer changeModiService;
+	ros::ServiceClient moduleUpdateServiceClient;
 };
 
 }

@@ -42,6 +42,8 @@
 
 #include <rexos_most/ModuleInfo.h>
 #include <rexos_most/MOSTState.h>
+#include <rexos_most/ModuleUpdate.h>
+#include <rexos_most/MOSTDatabaseClient.h>
 
 #pragma GCC system_header
 #include <Libjson/libjson.h>
@@ -57,7 +59,7 @@ public:
 
 private:
 	void callLookupHandler(std::string lookupType, std::string lookupID, environment_communication_msgs::Map payload);
-	void moduleInfoTopicCallback(const rexos_most::ModuleInfo& msg);
+	bool moduleUpdateService(rexos_most::ModuleUpdate::Request& req, rexos_most::ModuleUpdate::Response& res);
 	/**
 	 * @var int equipletId
 	 * The id of the equiplet
@@ -70,6 +72,8 @@ private:
 	 **/
 	BlackboardCppClient *blackboardClient;
 
+	MOSTDatabaseClient mostDatabaseclient;
+
 	ros::NodeHandle nh;
-	ros::Subscriber moduleInfoTopicSubscriber;
+	ros::ServiceServer moduleUpdateServiceServer;
 };

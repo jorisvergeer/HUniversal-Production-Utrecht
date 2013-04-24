@@ -43,13 +43,13 @@
 namespace rexos_most {
 
 class MOSTStateMachine: public MOSTTransitions {
-
-	/**
-	 * @var typedef int (StateMachine::*stateFunctionPtr)()
-	 * Function pointer definition for a state transition function
-	 **/
-	typedef bool (MOSTStateMachine::*stateFunctionPtr)();
 public:
+	class MOSTListener {
+	public:
+		virtual void onMOSTStateChanged() = 0;
+		virtual void onMOSTModiChanged() = 0;
+	};
+
 	MOSTStateMachine(int moduleID);
 
 	virtual ~MOSTStateMachine();
@@ -70,9 +70,16 @@ public:
 
 	bool statePossibleInModi(MOSTState state, MOSTModi modi);
 
+	void setMostListener(MOSTListener* listener);
+
 private:
+	void _setState(MOSTState state);
+	void _setModi(MOSTModi state);
+
 	bool onChangeStateService(rexos_most::ChangeState::Request &req, rexos_most::ChangeState::Response &res);
 	bool onChangeModiService(rexos_most::ChangeModi::Request &req, rexos_most::ChangeModi::Response &res);
+
+	MOSTListener* mostListener;
 
 	/**
 	 * @var MOSTState currentState
@@ -91,6 +98,12 @@ private:
 	 * Possible states of all modus
 	 **/
 	std::map<MOSTModi, std::vector<MOSTState> > modiPossibleStates;
+
+	/**
+	 * @var typedef int (StateMachine::*stateFunctionPtr)()
+	 * Function pointer definition for a state transition function
+	 **/
+	typedef bool (MOSTStateMachine::*stateFunctionPtr)();
 
 	/**
 	 * @var std::map<std::pair<MOSTState,MOSTState>, std::pair<stateFunctionPtr,stateFunctionPtr>> transitionMap;

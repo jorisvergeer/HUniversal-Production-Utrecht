@@ -38,7 +38,8 @@ using namespace rexos_most;
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
 MOSTStateMachine::MOSTStateMachine(int moduleID) :
-		currentState(STATE_SAFE), currentModi(MODI_NORMAL), moduleID(moduleID) {
+		mostListener(NULL), currentState(STATE_SAFE), currentModi(MODI_NORMAL), moduleID(moduleID) {
+
 	transitionMap[MOSTStatePair(STATE_SAFE, STATE_STANDBY)]= {
 		&MOSTStateMachine::transitionSetup, STATE_SETUP,
 		&MOSTStateMachine::transitionShutdown, STATE_SHUTDOWN};
@@ -78,13 +79,13 @@ bool MOSTStateMachine::changeState(MOSTState newState) {
 		return false;
 	}
 
-	currentState = it->second.transitionState;
+	_setState(it->second.transitionState);
 	if ((this->*it->second.transitionFunctionPointer)()) {
-		currentState = it->first.second;
+		_setState(it->first.second);
 	} else {
-		currentState = it->second.abortTransitionState;
+		_setState(it->second.abortTransitionState);
 		(this->*it->second.abortTransitionFunctionPointer)();
-		currentState = it->first.first; //previousstate
+		_setState(it->first.first); //previousstate
 	}
 
 	return true;
@@ -112,7 +113,7 @@ bool MOSTStateMachine::statePossibleInModi(MOSTState state, MOSTModi modi) {
 }
 
 bool MOSTStateMachine::changeModi(MOSTModi newModi) {
-	currentModi = newModi;
+	_setModi(newModi);
 	while (!statePossibleInModi(currentState, currentModi)) {
 		switch (currentState) {
 		case STATE_NORMAL:
@@ -124,4 +125,22 @@ bool MOSTStateMachine::changeModi(MOSTModi newModi) {
 		}
 	}
 	return true;
+}
+
+void MOSTStateMachine::setMostListener(MOSTListener* listener) {
+	mostListener = listener;
+}
+
+void MOSTStateMachine::_setState(MOSTState state){
+	currentState = state;
+	if(mostListener != NULL){
+		mostListener->onMOSTStateChanged();
+	}
+}
+
+void MOSTStateMachine::_setModi(MOSTModi modi){
+	currentModi = modi;
+	if(mostListener != NULL){
+		mostListener->onMOSTModiChanged();
+	}
 }

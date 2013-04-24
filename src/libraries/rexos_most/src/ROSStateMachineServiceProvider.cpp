@@ -29,6 +29,8 @@
 
 #include "rexos_most/ROSStateMachineServiceProvider.h"
 
+#include <rexos_most/ModuleUpdate.h>
+
 using namespace rexos_most;
 
 /**
@@ -45,6 +47,14 @@ ROSStateMachineServiceProvider::ROSStateMachineServiceProvider(
 			&ROSStateMachineServiceProvider::onChangeStateService, this);
 	changeModiService = nodeHandle.advertiseService(string,
 			&ROSStateMachineServiceProvider::onChangeModiService, this);
+
+	most->setMostListener(this);
+
+	ROS_INFO("Wait for equiplet...");
+	moduleUpdateServiceClient = nodeHandle.serviceClient<rexos_most::ModuleUpdate>("/most/equiplet/moduleUpdate");
+	moduleUpdateServiceClient.waitForExistence();
+	ROS_INFO("Check-in by equiplet");
+	notifyEquiplet();
 }
 
 ROSStateMachineServiceProvider::~ROSStateMachineServiceProvider() {
@@ -93,4 +103,22 @@ bool ROSStateMachineServiceProvider::onChangeModiService(
 		return false;
 	}
 	return true;
+}
+
+void ROSStateMachineServiceProvider::onMOSTStateChanged() {
+	notifyEquiplet();
+}
+void ROSStateMachineServiceProvider::onMOSTModiChanged() {
+	notifyEquiplet();
+}
+
+void ROSStateMachineServiceProvider::notifyEquiplet() {
+	rexos_most::ModuleUpdate::Request req;
+	req.info.id = most->getModuleID();
+	req.info.state = most->getCurrentState();
+	req.info.modi = most->getCurrentModi();
+	rexos_most::ModuleUpdate::Response res;
+	if(moduleUpdateServiceClient.call(req, res) == false){
+		ros::shutdown();
+	}
 }

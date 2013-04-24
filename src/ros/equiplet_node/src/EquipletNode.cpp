@@ -37,7 +37,12 @@
 EquipletNode::EquipletNode(int id) :
 		equipletId(id), blackboardClient(NULL) {
 
-	moduleInfoTopicSubscriber = nh.subscribe("/most/equiplet/moduleInfo", 1000, &EquipletNode::moduleInfoTopicCallback, this);
+	if(mostDatabaseclient.getAllModuleData().size() > 0){
+		ROS_WARN("Previous equiplet instance did not cleanup corrrectly");
+	}
+	mostDatabaseclient.clearModuleData();
+
+	moduleUpdateServiceServer = nh.advertiseService("/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService, this);
 
 	blackboardClient = new BlackboardCppClient("localhost", "REXOS", "blackboard", this);
 	blackboardClient->subscribe("instruction");
@@ -104,7 +109,13 @@ void EquipletNode::callLookupHandler(std::string lookupType, std::string lookupI
 	}
 }
 
-void EquipletNode::moduleInfoTopicCallback(const rexos_most::ModuleInfo& msg) {
-	ROS_INFO("Received module update (id=%d, state=%s)", msg.id, rexos_most::MOSTState_txt[msg.state]);
+bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req, rexos_most::ModuleUpdate::Response& res) {
+	ROS_INFO("Received module update (id=%d, state=%s)", req.info.id, rexos_most::MOSTState_txt[req.info.state]);
+	MOSTDatabaseClient::ModuleData data;
+	data.id = req.info.id;
+	data.state = req.info.state;
+	data.modi = req.info.modi;
+	mostDatabaseclient.setModuleData(data);
+	return true;
 }
 
