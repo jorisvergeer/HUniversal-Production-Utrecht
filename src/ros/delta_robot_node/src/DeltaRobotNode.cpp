@@ -228,7 +228,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_json(rexos_std_srvs::M
 
 	if(getCurrentState() != rexos_most::STATE_NORMAL){
 		res.succeeded = false;
-		res.message = "Cannot move to point, mast state=" + std::string(rexos_most::MOSTState_txt[getCurrentState()]);
+		res.message = "Cannot move to point, most state=" + std::string(rexos_most::MOSTState_txt[getCurrentState()]);
 		ROS_INFO("%s",res.message.c_str());
 	} else {
 		Point p = parsePoint(req.json);
