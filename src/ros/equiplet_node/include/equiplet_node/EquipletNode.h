@@ -78,4 +78,6 @@ private:
 	ros::ServiceServer moduleUpdateServiceServer;
 
 	bool transitionSetup();
+	bool transitionShutdown();
+	bool changeModuleState(int moduleID,rexos_most::MOSTState state);
 };

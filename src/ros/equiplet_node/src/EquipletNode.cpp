@@ -116,22 +116,41 @@ void EquipletNode::callLookupHandler(std::string lookupType,
 	}
 }
 
+bool EquipletNode::changeModuleState(int moduleID,rexos_most::MOSTState state){
+	rexos_most::ChangeState::Request req;
+	rexos_most::ChangeState::Response res;
+	req.desiredState = rexos_most::STATE_SAFE;
+	std::stringstream ss;
+	ss << "/most/" << moduleID << "/changeState";
+	if(!(nh.serviceClient<rexos_most::ChangeState>(
+		ss.str()).call(req, res)) ||
+		!res.executed)
+	{
+		return false;
+	}
+	return true;
+}
+
 bool EquipletNode::transitionSetup() {
 	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
 	for (int i = 0; i < moduleData.size(); i++) {
-		rexos_most::ChangeState::Request req;
-		rexos_most::ChangeState::Response res;
-		std::stringstream ss;
-		ss << "/most/" << moduleData[i].id << "/changeState";
-		if(!(nh.serviceClient<rexos_most::ChangeState>(
-				ss.str()).call(req, res)) ||
-				!res.executed)
+		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_STANDBY))
 		{
 			//Module isn't possible to set standby (error)
+			return false;
 		}
-
 	}
-	return false;
+	return true;
+}
+
+bool EquipletNode::transitionShutdown() {
+	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
+	bool succeeded = true;
+	for (int i = 0; i < moduleData.size(); i++) {
+		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_SAFE))
+			succeeded = false;
+	}
+	return succeeded;
 }
 
 bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
