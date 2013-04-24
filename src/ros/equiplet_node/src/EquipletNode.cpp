@@ -29,6 +29,7 @@
  **/
 
 #include <equiplet_node/EquipletNode.h>
+#include <rexos_most/ChangeState.h>
 
 /**
  * Create a new EquipletNode
@@ -114,16 +115,15 @@ void EquipletNode::callLookupHandler(std::string lookupType,
 	}
 }
 
-typedef
-
 bool EquipletNode::transitionSetup() {
-	std::vector<MOSTDatabaseClient::ModuleData> moduleData =
-			mostDatabaseclient.getAllModuleData();
-	for (int i = 0; i < moduleData; i++) {
+	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
+	for (int i = 0; i < moduleData.size(); i++) {
 		rexos_most::ChangeState::Request req;
 		rexos_most::ChangeState::Response res;
+		std::stringstream ss;
+		ss << "/most/" << moduleData[i].id << "/changeState";
 		if(!(nh.serviceClient<rexos_most::ChangeState>(
-				"/most/" + moduleData[i].id + "/changeState").call(req, res)) ||
+				ss.str()).call(req, res)) ||
 				!res.executed)
 		{
 			//Module isn't possible to set standby (error)
