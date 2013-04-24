@@ -68,20 +68,6 @@ deltaRobotNodeNamespace::DeltaRobotNode::DeltaRobotNode(int moduleID) :
 	calibrateService_json(){
 	ROS_INFO("DeltaRobotnode Constructor entering...");
 
-	// Advertise the old deprecated services
-	moveToPointService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_old, this);
-	movePathService_old =	nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::movePath_old, this);
-	moveToRelativePointService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint_old, this);
-	moveRelativePathService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_RELATIVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath_old, this);
-	calibrateService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate_old, this);
-
-	// Advertise the json services
-	moveToPointService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_json, this);
-	movePathService_json =	nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_PATH_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::movePath_json, this);
-	moveToRelativePointService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint_json, this);
-	moveRelativePathService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_RELATIVE_PATH_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath_json, this);
-	calibrateService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate_json, this);
-
 	ROS_INFO("Configuring Modbus...");
 
 	// Initialize modbus for IO controller
@@ -521,6 +507,39 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath_json(rexos_std_sr
 }
 
 /**
+ * Will start the service servers of the module to make it able to perform tasks.
+ */
+void deltaRobotNodeNamespace::DeltaRobotNode::startServices(){
+	// Advertise the old deprecated services
+	moveToPointService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_old, this);
+	movePathService_old =	nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::movePath_old, this);
+	moveToRelativePointService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT, &deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint_old, this);
+	moveRelativePathService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_RELATIVE_PATH, &deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath_old, this);
+	//calibrateService_old = nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate_old, this);
+
+	// Advertise the json services
+	moveToPointService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_POINT_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveToPoint_json, this);
+	movePathService_json =	nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_PATH_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::movePath_json, this);
+	moveToRelativePointService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_TO_RELATIVE_POINT_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveToRelativePoint_json, this);
+	moveRelativePathService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::MOVE_RELATIVE_PATH_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::moveRelativePath_json, this);
+	//calibrateService_json = nodeHandle.advertiseService(DeltaRobotNodeServices::CALIBRATE_JSON, &deltaRobotNodeNamespace::DeltaRobotNode::calibrate_json, this);
+}
+
+/**
+ * Shutdown the service servers
+ */
+void deltaRobotNodeNamespace::DeltaRobotNode::stopServices(){
+	moveToPointService_old.shutdown();
+	movePathService_old.shutdown();
+	moveToRelativePointService_old.shutdown();
+	moveRelativePathService_old.shutdown();
+	moveToPointService_json.shutdown();
+	movePathService_json.shutdown();
+	moveToRelativePointService_json.shutdown();
+	moveRelativePathService_json.shutdown();
+}
+
+/**
  * Transition from Safe to Standby state
  * @return 0 if everything went OK else error
  **/
@@ -557,7 +576,8 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::transitionShutdown(){
  **/
 bool deltaRobotNodeNamespace::DeltaRobotNode::transitionStart(){
 	ROS_INFO("Start transition called");
-	// Could calibrate here
+	//The service servers should be set, to provide the normal methods for the equiplet
+	startServices();
 	return 0;
 }
 /**
@@ -566,6 +586,8 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::transitionStart(){
  **/
 bool deltaRobotNodeNamespace::DeltaRobotNode::transitionStop(){
 	ROS_INFO("Stop transition called");
+	//The service servers should be set off, so the equiplet isn't able to set tasks for the module
+	stopServices();
 	// Go to base (Motors on 0 degrees)
 	return 0;
 }
@@ -647,7 +669,7 @@ int main(int argc, char **argv){
 
 	ROS_INFO("Creating DeltaRobotNode");
 
-	deltaRobotNodeNamespace::DeltaRobotNode drn(equipletID, moduleID);
+	deltaRobotNodeNamespace::DeltaRobotNode drn(moduleID);
 
 	ROS_INFO("Running StateEngine");
 	ros::spin();
