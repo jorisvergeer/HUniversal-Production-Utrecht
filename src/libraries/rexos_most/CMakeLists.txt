@@ -3,6 +3,7 @@ project(rexos_most)
 
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg message_generation)
+find_package(Mongo)
 
 file(GLOB_RECURSE msgs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/msg" "*.msg")
 add_message_files(
@@ -30,11 +31,11 @@ catkin_add_gtest(rexos_most_test ${tests})
 target_link_libraries(rexos_most_test ${catkin_LIBRARIES} gtest_main gmock)
 
 file(GLOB_RECURSE sources "src/**.c" "src/**.cpp")
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${MONGO_INCLUDE_DIRS})
 message(STATUS "sources: ${sources}")
 add_library(rexos_most ${sources})
 
-target_link_libraries(rexos_most ${catkin_LIBRARIES})
+target_link_libraries(rexos_most ${catkin_LIBRARIES} ${MONGO_LIBRARIES})
 add_dependencies(rexos_most rexos_most_gencpp)
 
 add_definitions("-std=c++11")
