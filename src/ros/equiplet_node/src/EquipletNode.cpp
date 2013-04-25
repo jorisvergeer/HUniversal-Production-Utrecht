@@ -3,7 +3,7 @@
  * @brief Symbolizes an entire EquipletNode.
  * @date Created: 2012-10-12
  *
- * @author Dennis Koole
+ * @author Joris Vergeer & Gerben Boot
  *
  * @section LICENSE
  * License: newBSD
@@ -155,8 +155,8 @@ bool EquipletNode::transitionShutdown() {
 
 bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
 		rexos_most::ModuleUpdate::Response& res) {
-	ROS_INFO("Received module update (id=%d, state=%s)", req.info.id,
-			rexos_most::MOSTState_txt[req.info.state]);
+	ROS_INFO("Received module update (id=%d, state=%s, modi=%s)", req.info.id,
+			rexos_most::MOSTState_txt[req.info.state],rexos_most::MOSTModi_txt[req.info.modi]);
 	MOSTDatabaseClient::ModuleData data;
 	data.id = req.info.id;
 	data.state = req.info.state;

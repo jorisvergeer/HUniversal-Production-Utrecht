@@ -40,12 +40,12 @@ using namespace rexos_most;
 ROSStateMachineServiceProvider::ROSStateMachineServiceProvider(
 		MOSTStateMachine* most) :
 		most(most) {
-	std::stringstream ss;
-	ss << "most/" << most->getModuleID() << "/change_state";
-	std::string string_state = ss.str();
-	ss.clear();
-	ss << "most/" << most->getModuleID() << "/change_modi";
-	std::string string_modi = ss.str();
+	std::stringstream ss_state;
+	ss_state << "most/" << most->getModuleID() << "/change_state";
+	std::string string_state = ss_state.str();
+	std::stringstream ss_modi;
+	ss_modi << "most/" << most->getModuleID() << "/change_modi";
+	std::string string_modi = ss_modi.str();
 	changeStateService = nodeHandle.advertiseService(string_state,
 			&ROSStateMachineServiceProvider::onChangeStateService, this);
 	changeModiService = nodeHandle.advertiseService(string_modi,
@@ -91,16 +91,16 @@ bool ROSStateMachineServiceProvider::onChangeModiService(
 		res.executed = most->changeModi(MODI_NORMAL);
 		break;
 	case MODI_SERVICE:
-		res.executed = most->changeModi(MODI_NORMAL);
+		res.executed = most->changeModi(MODI_SERVICE);
 		break;
 	case MODI_ERROR:
-		res.executed = most->changeModi(MODI_NORMAL);
+		res.executed = most->changeModi(MODI_ERROR);
 		break;
 	case MODI_CRITICAL_ERROR:
-		res.executed = most->changeModi(MODI_NORMAL);
+		res.executed = most->changeModi(MODI_CRITICAL_ERROR);
 		break;
 	case MODI_E_STOP:
-		res.executed = most->changeModi(MODI_NORMAL);
+		res.executed = most->changeModi(MODI_E_STOP);
 		break;
 	default:
 		return false;

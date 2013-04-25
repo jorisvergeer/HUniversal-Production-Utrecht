@@ -3,7 +3,7 @@
  * @brief Symbolizes an entire EquipletNode.
  * @date Created: 2012-10-12
  *
- * @author Dennis Koole
+ * @author Gerben Boot & Joris Vergeer
  *
  * @section LICENSE
  * License: newBSD
