@@ -70,7 +70,7 @@ MOSTStateMachine::~MOSTStateMachine() {
 bool MOSTStateMachine::changeState(MOSTState newState) {
 	// decode msg and read variables
 	//ROS_INFO("Request Statechange message received");
-	if (!statePossibleInModi(newState, currentModi))
+	if (!statePossibleInModi(newState, currentModi) && newState > currentState )
 		return false;
 
 	transitionMapType::iterator it = transitionMap.find(MOSTStatePair(currentState, newState));
