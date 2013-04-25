@@ -567,7 +567,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::transitionShutdown(){
 	ROS_INFO("Shutdown transition called");
 	// Should have information about the workspace, calculate a safe spot and move towards it
 	deltaRobot->powerOff();
-	return 0;
+	return 1;
 }
 
 /**
@@ -578,7 +578,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::transitionStart(){
 	ROS_INFO("Start transition called");
 	//The service servers should be set, to provide the normal methods for the equiplet
 	startServices();
-	return 0;
+	return 1;
 }
 /**
  * Transition from Normal to Standby state
@@ -589,7 +589,7 @@ bool deltaRobotNodeNamespace::DeltaRobotNode::transitionStop(){
 	//The service servers should be set off, so the equiplet isn't able to set tasks for the module
 	stopServices();
 	// Go to base (Motors on 0 degrees)
-	return 0;
+	return 1;
 }
 
 /**
