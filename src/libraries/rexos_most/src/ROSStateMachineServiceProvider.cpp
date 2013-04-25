@@ -42,10 +42,13 @@ ROSStateMachineServiceProvider::ROSStateMachineServiceProvider(
 		most(most) {
 	std::stringstream ss;
 	ss << "most/" << most->getModuleID() << "/change_state";
-	std::string string = ss.str();
-	changeStateService = nodeHandle.advertiseService(string,
+	std::string string_state = ss.str();
+	ss.clear();
+	ss << "most/" << most->getModuleID() << "/change_modi";
+	std::string string_modi = ss.str();
+	changeStateService = nodeHandle.advertiseService(string_state,
 			&ROSStateMachineServiceProvider::onChangeStateService, this);
-	changeModiService = nodeHandle.advertiseService(string,
+	changeModiService = nodeHandle.advertiseService(string_modi,
 			&ROSStateMachineServiceProvider::onChangeModiService, this);
 
 	most->setMostListener(this);
