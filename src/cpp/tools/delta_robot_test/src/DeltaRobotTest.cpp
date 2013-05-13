@@ -83,6 +83,63 @@ namespace DeltaRobotTestNamespace{
 
 using namespace DeltaRobotTestNamespace;
 
+using namespace std; 
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+}Point;
+Point points; 
+ 
+float rotationMatrix[4][4];
+float inputMatrix[4][1] = {0.0, 0.0, 0.0, 0.0};
+float outputMatrix[4][1] = {0.0, 0.0, 0.0, 0.0}; 
+ 
+void showPoint(){
+    cout<<"("<<outputMatrix[0][0]<<","<<outputMatrix[1][0]<<","<<outputMatrix[2][0]<<")"<<endl;
+} 
+ 
+void multiplyMatrix()
+{
+    for(int i = 0; i < 4; i++ ){
+        for(int j = 0; j < 1; j++){
+            outputMatrix[i][j] = 0;
+            for(int k = 0; k < 4; k++){
+                outputMatrix[i][j] += rotationMatrix[i][k] * inputMatrix[k][j];
+            }
+        }
+    }
+}
+void setUpRotationMatrix(float angle, float u, float v, float w)
+{
+    float L = (u*u + v * v + w * w);
+    angle = angle * M_PI / 180.0; //converting to radian value
+    float u2 = u * u;
+    float v2 = v * v;
+    float w2 = w * w; 
+ 
+    rotationMatrix[0][0] = (u2 + (v2 + w2) * cos(angle)) / L;
+    rotationMatrix[0][1] = (u * v * (1 - cos(angle)) - w * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[0][2] = (u * w * (1 - cos(angle)) + v * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[0][3] = 0.0; 
+ 
+    rotationMatrix[1][0] = (u * v * (1 - cos(angle)) + w * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[1][1] = (v2 + (u2 + w2) * cos(angle)) / L;
+    rotationMatrix[1][2] = (v * w * (1 - cos(angle)) - u * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[1][3] = 0.0; 
+ 
+    rotationMatrix[2][0] = (u * w * (1 - cos(angle)) - v * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[2][1] = (v * w * (1 - cos(angle)) + u * sqrt(L) * sin(angle)) / L;
+    rotationMatrix[2][2] = (w2 + (u2 + v2) * cos(angle)) / L;
+    rotationMatrix[2][3] = 0.0; 
+ 
+    rotationMatrix[3][0] = 0.0;
+    rotationMatrix[3][1] = 0.0;
+    rotationMatrix[3][2] = 0.0;
+    rotationMatrix[3][3] = 1.0;
+} 
+
 /**
  * Starting method for the DeltaRobotTest.
  *
@@ -115,13 +172,11 @@ int main(int argc, char **argv){
 	delta_robot_node::MoveRelativePath moveRelativePathService;
 	
 	// Test Calibrate Service.
-	std:: cout << "Press any key to start the Calibrate" << std::endl;
-	std:: cin >> keyPress;
+	std:: cout << "Start the Calibrate" << std::endl;
 	calibrateClient.call(calibrateService);
 
 	// Test MoveToPoint Service.
-	std:: cout << "Press any key to start the MoveToPoint" << std::endl;
-	std:: cin >> keyPress;
+	std:: cout << "Start the MoveToPoint" << std::endl;
 	moveToPointService.request.motion.x = 10;
 	moveToPointService.request.motion.y = 10;
 	moveToPointService.request.motion.z = -210;
@@ -131,7 +186,7 @@ int main(int argc, char **argv){
 	moveToStartPoint();
 
 	// MoveToPoint speed benchmark
-	std::cout << "Press any key to start the MoveToPoint speed benchmark" << std::endl;
+	std::cout << "Start the MoveToPoint speed benchmark" << std::endl;
 	std::cin >> keyPress;
 	for(int acc = 25; acc <= 200; acc += 25){
 		std::cout << "max acceleration: " << acc << std::endl;
@@ -151,8 +206,7 @@ int main(int argc, char **argv){
 	}
 
 	// Test MoveToRelativePoint Service.
-	std:: cout << "Press any key to start the MoveToRelativePoint" << std::endl;
-	std:: cin >> keyPress;
+	std:: cout << "Start the MoveToRelativePoint" << std::endl;
 	moveToRelativePointService.request.motion.x = -1;
 	moveToRelativePointService.request.motion.y = -1;
 	moveToRelativePointService.request.motion.z = -1;
@@ -162,8 +216,7 @@ int main(int argc, char **argv){
 	moveToStartPoint();
 
 	// Test MovePath Service.
-	std:: cout << "Press any key to start the MovePathService" << std::endl;
-	std:: cin >> keyPress;
+	std:: cout << "Start the MovePathService" << std::endl;
 	delta_robot_node::Motion point1;
 	delta_robot_node::Motion point2;
 	delta_robot_node::Motion point3;
@@ -197,8 +250,7 @@ int main(int argc, char **argv){
 	moveToStartPoint();
 
 	// Test MoveRelativePath Service.
-	std:: cout << "Press any key to start the MoveRelativePath" << std::endl;
-	std:: cin >> keyPress;
+	std:: cout << "Start the MoveRelativePath" << std::endl;
 	for(double z = 0; z < 10; z++){
 		delta_robot_node::Motion point1;
 		delta_robot_node::Motion point2;
@@ -236,5 +288,27 @@ int main(int argc, char **argv){
 		moveRelativePathService.request.motion.push_back(point5);
 	}
 	moveRelativePathClient.call(moveRelativePathService);
+
+        // Test the spherical rotation
+        std:: cout << "Start the spherical rotation demo" << std::endl;
+
+	moveToStartPoint();
+
+	for(int i = 0; ; i++){
+		float angle;
+		float u, v, w;
+		inputMatrix[0][0] = 0;
+		inputMatrix[1][0] = 0;
+		inputMatrix[2][0] = 30;
+		inputMatrix[3][0] = 1.0; 	
+		setUpRotationMatrix(((float) i) / 25.0f, 1, 1, 1);
+		multiplyMatrix();
+		moveToPointService.request.motion.x = 0 + outputMatrix[0][0];
+		moveToPointService.request.motion.y = 0 + outputMatrix[1][0];
+		moveToPointService.request.motion.z = -((180 + 250) / 2) + outputMatrix[2][0];
+		moveToPointService.request.motion.maxAcceleration = maxAcceleration / 2;
+		moveToPointClient.call(moveToPointService);
+	}
+	
 	return 0;
 }
