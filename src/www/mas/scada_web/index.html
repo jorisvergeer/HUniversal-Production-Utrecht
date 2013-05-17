@@ -1,0 +1,127 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="script/style.css">
+<title>SCADA Equiplet (...)</title>
+<script type="text/javascript" src="script/jquery.js"></script>
+<script type="text/javascript">
+	var equipletInfo = {};
+	var moduleInfo = {};
+	
+	//Enable the make safe button
+	$(document).ready(
+			function() {
+				$("#makeequipletsafe").click(
+						function() {
+						$.ajax({
+							url : 'remote/makeEquipletSafe'
+							});
+							return false;
+						});
+			});
+
+	//Start equipletInfo pollig
+	$(document).ready(
+			function() {
+				(function worker() {
+					$.ajax({
+						dataType : "json",
+						url : 'remote/equipletInfo',
+						success : function(data) {
+							equipletInfo = data;
+							document.title = "SCADA Equiplet (" + equipletInfo["name"]
+									+ ")";
+							$(".equiplet_name").text(equipletInfo["name"]);
+							$(".equiplet_id").text(equipletInfo["id"]);
+							$(".equiplet_safety").text(equipletInfo["safety"]);
+							$(".equiplet_operational").text(equipletInfo["operational"]);
+						},
+						complete : function() {
+							setTimeout(worker, 5000);
+						}
+					});
+				})();
+			});
+			
+	//Start moduleInfo polling
+	$(document).ready(
+			function() {
+				(function worker() {
+					$.ajax({
+						dataType : "json",
+						url : 'remote/moduleInfo',
+						success : function(data) {
+							moduleInfo = data;
+							
+							var modules = moduleInfo["modules"];
+							$("#content").empty();
+							$.each(modules, function(i, value) {
+								var module = $("#moduleinfotemplate").clone();
+								module.removeClass("hidden");
+								module.addClass("moduleinfo");
+								$(".module_name", module).text(value["name"]);
+								$(".module_id", module).text(value["id"]);
+								$(".module_form_id", module).val(value["id"]);
+								$(".module_type", module).text(value["type"]);
+								$(".module_state", module).text(value["state"]);
+								$(".module_modi", module).text(value["modi"]);
+								
+								$(".modulechangemodibutton", module).click(
+										function() {
+											$.ajax({
+												type: "post",
+												url: "remote/changeModuleModi",
+												data: $(this.form).serialize()
+											});
+											return false;
+										});
+								
+								module.appendTo('#content');
+							});
+						},
+						complete : function() {
+							setTimeout(worker, 5000);
+						}
+					});
+				})();
+			});
+</script>
+</head>
+<body>
+    <div id="moduleinfotemplate" class="hidden">
+		<h3><span class="module_name">...</span></h3>
+		<div>id: <span class="module_id">...</span></div>
+		<div>type: <span class="module_type">...</span></div>
+		<div>state: <span class="module_state">...</span></div>
+		<div>modi: <span class="module_modi">...</span></div>
+		<form>
+			<input type="hidden" name="id" class="module_form_id" />
+			<select name="modi">
+				<option value="normal">normal</option>
+				<option value="error">error</option>
+				<option value="critical_error">critical error</option>
+				<option value="e_stop">E-Stop</option>
+			</select>
+			<input type="submit" value="Set modi" class="modulechangemodibutton"/>
+		</form>
+	</div>
+	<div id="container">
+		<div id="header" class="border">
+			<div style="font-size:200%">
+				SCADA Equiplet <span class="equiplet_name">...</span> (<span
+					class="equiplet_id">...</span>)
+			</div>
+			<div>
+			    Safety: <span class="equiplet_safety">...</span> <input type="button" value="Make safe" id="makeequipletsafe"/>
+			</div>
+			<div>
+			    Operational: <span class="equiplet_operational">...</span>
+			</div>
+		</div>
+		<div id="content" class="border">Content</div>
+		<div id="sidebar" class="border">
+			<h3>Services</h3>
+		</div>
+		<div id="footer" class="border">Footer</div>
+	</div>
+</body>
+</html>
