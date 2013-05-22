@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>rexos_est_cpp_client</name>
+  <version>0.0.0</version>
+  <description>The state_machine_cpp_client package</description>
+  <maintainer email="lowcostvision@gmail.com">Leau Caust</maintainer>
+  <license>newBSD</license>
+  <url type="website">https://github.com/AgileManufacturing/HUniversal-Production-Utrecht</url>
+  <author email="boot.gerben@gmail.com">Gerben Boot</author>
+  <buildtool_depend>catkin</buildtool_depend>
+ 
+  <build_depend></build_depend>
+  <run_depend></run_depend>
+
+
+
+  <export>
+
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lstate_blackboard_cpp_client"/>
+  </export>
+</package>
