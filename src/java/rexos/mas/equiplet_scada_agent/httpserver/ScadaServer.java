@@ -1,7 +1,5 @@
 package rexos.mas.equiplet_scada_agent.httpserver;
 
-import javax.swing.JEditorPane;
-
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -16,7 +14,7 @@ public class ScadaServer extends Server{
         resource_handler.setDirectoriesListed(true);
         resource_handler.setWelcomeFiles(new String[]{ "index.html" });
  
-        resource_handler.setResourceBase(".");
+        resource_handler.setResourceBase("./src/www/mas/scada_web/");
         
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
