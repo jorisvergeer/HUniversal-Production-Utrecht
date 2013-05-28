@@ -1,5 +1,5 @@
 /**
- * @file MongoDBConnection.java
+ * @file rexos/libraries/blackboard_client/MongoDBConnection.java
  * @brief Helper class for managing Mongo connections.
  * @date Created: 2012-04-05
  *
@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 /**
  * Helper class for managing Mongo connections.
@@ -50,7 +51,7 @@ public class MongoDBConnection {
 	 * Initializes the databaseConnections Hashtable.
 	 **/
 	static {
-		databaseConnections = new Hashtable<ServerAddress, MongoDBConnection>();
+		databaseConnections = new Hashtable<>();
 	}
 	
 	/**
@@ -73,6 +74,7 @@ public class MongoDBConnection {
 	private MongoDBConnection(ServerAddress address) throws GeneralMongoException {
 		try {
 			mongoClient = new Mongo(address);
+			mongoClient.setWriteConcern(WriteConcern.SAFE);
 		} catch (MongoException mongoException) {
 			throw new GeneralMongoException("A mongo exception occurred while connecting.", mongoException);
 		}

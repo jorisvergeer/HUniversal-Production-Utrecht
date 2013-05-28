@@ -1,5 +1,5 @@
 /**
- * @file OplogEntry.java
+ * @file rexos/libraries/blackboard_client/OplogEntry.java
  * @brief Representation of a document in the oplog collection.
  * @date Created: 2012-04-04
  *
@@ -31,9 +31,10 @@
 
 package rexos.libraries.blackboard_client;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.bson.types.ObjectId;
 
 /**
  * Utility class for handling an oplog entry.
@@ -127,6 +128,7 @@ public class OplogEntry {
 	 * Returns a JSON serialization of the oplog entry.
 	 * @return A JSON serialization of the oplog entry.
 	 **/
+	@Override
 	public String toString() {
 		return oplogEntry.toString();
 	}
