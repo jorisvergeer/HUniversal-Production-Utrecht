@@ -129,6 +129,9 @@ public class EquipletScada extends Agent implements UpdateModulesListener, Black
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		updateEquiplet();
+		updateModules();
 	}
 
 	@Override
@@ -165,6 +168,7 @@ public class EquipletScada extends Agent implements UpdateModulesListener, Black
 	public void onMessage(MongoOperation operation, OplogEntry entry) {
 		updateModules();
 		updateEquiplet();
+		System.out.println("Oplog Entry update: " + entry.toString());
 	}
 
 	public List<ModuleInfo> getModuleInfos() {
@@ -181,5 +185,10 @@ public class EquipletScada extends Agent implements UpdateModulesListener, Black
 
 	public void setEquipletInfo(EquipletInfo equipletInfo) {
 		this.equipletInfo = equipletInfo;
+	}
+
+	public MOSTDBClient getMOSTDBClient() {
+		return mostDbClient;
+		
 	}
 }

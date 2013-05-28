@@ -3,6 +3,8 @@ package rexos.mas.equiplet_scada_agent;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+import rexos.libraries.blackboard_client.BasicOperationSubscription;
 import rexos.libraries.blackboard_client.BlackboardClient;
 import rexos.libraries.blackboard_client.BlackboardSubscriber;
 import rexos.libraries.blackboard_client.FieldUpdateSubscription;
@@ -10,7 +12,15 @@ import rexos.libraries.blackboard_client.FieldUpdateSubscription.MongoUpdateLogO
 import rexos.libraries.blackboard_client.GeneralMongoException;
 import rexos.libraries.blackboard_client.InvalidDBNamespaceException;
 import rexos.libraries.blackboard_client.InvalidJSONException;
+import rexos.libraries.blackboard_client.MongoOperation;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.JsonWriter;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class MOSTDBClient {
@@ -22,12 +32,17 @@ public class MOSTDBClient {
 
 	private BlackboardClient equipletClient;
 	private BlackboardClient modulesClient;
+	private BlackboardClient equipletCommandsClient;
 
 	public MOSTDBClient(EquipletScada scada) throws MostDbClientException {
 		try {
 			equipletClient = new BlackboardClient("145.89.191.131");
 			equipletClient.setDatabase("most");
 			equipletClient.setCollection("equiplet");
+			
+			equipletCommandsClient = new BlackboardClient("145.89.191.131");
+			equipletCommandsClient.setDatabase("most");
+			equipletCommandsClient.setCollection("equipletCommands");
 
 			modulesClient = new BlackboardClient("145.89.191.131");
 			modulesClient.setDatabase("most");
@@ -41,20 +56,23 @@ public class MOSTDBClient {
 	public void subscribe(BlackboardSubscriber subscriber)
 			throws MostDbClientException {
 		try {
-			FieldUpdateSubscription equipletSubscription = new FieldUpdateSubscription(
-					"id", subscriber);
-			equipletSubscription.addOperation(MongoUpdateLogOperation.REPLACE);
-			equipletSubscription.addOperation(MongoUpdateLogOperation.SET);
-			equipletSubscription.addOperation(MongoUpdateLogOperation.UNSET);
+			equipletClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.DELETE, subscriber));
+			equipletClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.UPDATE, subscriber));
+			equipletClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.INSERT, subscriber));
+			equipletClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.NOOP, subscriber));
 			
-			FieldUpdateSubscription modulesSubscription = new FieldUpdateSubscription(
-					"id", subscriber);
-			modulesSubscription.addOperation(MongoUpdateLogOperation.REPLACE);
-			modulesSubscription.addOperation(MongoUpdateLogOperation.SET);
-			modulesSubscription.addOperation(MongoUpdateLogOperation.UNSET);
-
-			equipletClient.subscribe(equipletSubscription);
-			modulesClient.subscribe(modulesSubscription);
+			modulesClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.DELETE, subscriber));
+			modulesClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.UPDATE, subscriber));
+			modulesClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.INSERT, subscriber));
+			modulesClient.subscribe(new BasicOperationSubscription(
+					MongoOperation.NOOP, subscriber));
 		} catch (InvalidDBNamespaceException e) {
 			throw new MostDbClientException(e);
 		}
@@ -94,6 +112,18 @@ public class MOSTDBClient {
 			return equipletInfo;
 		} catch (InvalidJSONException | InvalidDBNamespaceException
 				| GeneralMongoException e) {
+			throw new MostDbClientException(e);
+		}
+	}
+	
+	public void callEquipletCommand(String command, String... args) throws MostDbClientException{
+		DBObject commandObject = new BasicDBObject();
+		commandObject.put("command", command);
+		commandObject.put("args", args);
+		
+		try {
+			equipletCommandsClient.insertDocument(commandObject);
+		} catch (InvalidDBNamespaceException | GeneralMongoException e) {
 			throw new MostDbClientException(e);
 		}
 	}

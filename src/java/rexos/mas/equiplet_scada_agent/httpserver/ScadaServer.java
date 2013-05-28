@@ -25,7 +25,8 @@ public class ScadaServer extends Server {
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resource_handler,
 				new EquipletInfoHandler(scada), new ModuleInfoHandler(scada),
-				new DefaultHandler() });
+				new MakeEquipletSafeHandler(scada),
+				new ChangeModuleModiHandler(scada), new DefaultHandler() });
 
 		setHandler(handlers);
 	}

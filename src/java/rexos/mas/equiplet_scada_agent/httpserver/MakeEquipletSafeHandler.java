@@ -13,37 +13,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import rexos.mas.equiplet_scada_agent.EquipletScada;
+import rexos.mas.equiplet_scada_agent.MOSTDBClient.MostDbClientException;
 import rexos.mas.equiplet_scada_agent.ModuleInfo;
 
-public class ModuleInfoHandler extends
+public class MakeEquipletSafeHandler extends
 		org.eclipse.jetty.server.handler.AbstractHandler {
 
 	private EquipletScada scada;
 
-	public ModuleInfoHandler(EquipletScada scada) {
+	public MakeEquipletSafeHandler(EquipletScada scada) {
 		this.scada = scada;
 	}
 
 	@Override
 	public void handle(String arg0, Request arg1, HttpServletRequest arg2,
 			HttpServletResponse arg3) throws IOException, ServletException {
-		if (arg0.equals("/remote/moduleInfo")) {
+		if (arg0.equals("/remote/makeEquipletSafe")) {
 
-			List<ModuleInfo> moduleInfos = scada.getModuleInfos();
-
-			JsonArray jsonArray = new JsonArray();
-			for (ModuleInfo modueInfo : moduleInfos) {
-				JsonObject jsonObject = new JsonObject();
-				jsonObject.addProperty("id", modueInfo.id);
-				jsonObject.addProperty("modi", modueInfo.modi);
-				jsonObject.addProperty("state", modueInfo.state);
-				jsonObject.addProperty("name", "TODO");
-				jsonObject.addProperty("type", "TODO");
-				jsonArray.add(jsonObject);
+			try {
+				scada.getMOSTDBClient().callEquipletCommand("makeEquipletSafe");
+			} catch (MostDbClientException e) {
+				e.printStackTrace();
 			}
-			JsonObject result = new JsonObject();
-			result.add("modules", jsonArray);
-			arg3.getWriter().write(result.toString());
 
 			arg1.setHandled(true);
 		} else {
