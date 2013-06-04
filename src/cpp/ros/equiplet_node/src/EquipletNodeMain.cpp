@@ -30,38 +30,48 @@
 
 #include <equiplet_node/EquipletNode.h>
 
+static void show_usage(std::string name) {
+	std::cerr << "Usage: " << name << " <options(s)>\n" << "Options:\n"
+			<< "\t--help\t\tShow this help message\n"
+			<< "\t--blackboard\tIP address of the blackboard (default: 145.89.191.131)\n"
+			<< "\t--id\t\tID of this equiplet (default: 1)\n";
+}
+
 int main(int argc, char **argv) {
+	std::string blackboardIP = "145.89.191.131";
+	int equipletID = 1;
 
-	// Check if an equiplet id is given at the command line
-	int equipletId = 1;
-	if (argc != 2 || rexos_utilities::stringToInt(equipletId, argv[1]) != 0) {
-		std::cerr << "Cannot read equiplet id from commandline. Assuming equiplet id is 1" << std::endl;
-	}
-
-	std::vector<int> moduleIDs;
-	for(int i = 0; i < argc; i++)
-	{
-		switch(i){
-		case 0:
-			break;
-		case 1:
-			rexos_utilities::stringToInt(equipletId, argv[i]);
-			break;
-		default:
-			int moduleID = -1;
-			rexos_utilities::stringToInt(moduleID, argv[i]);
-			moduleIDs.push_back(moduleID);
-			break;
+	for (int i = 0; i < argc; i++) {
+		std::string arg = argv[i];
+		if (arg == "--help") {
+			show_usage(argv[0]);
+			return 0;
+		} else if (arg == "--blackboard") {
+			if (i + 1 < argc) {
+				blackboardIP = argv[i++];
+			} else {
+				std::cerr << "--blackboard requires one argument";
+				return -1;
+			}
+		} else if (arg == "--id") {
+			if (i + 1 < argc) {
+				std::stringstream ss;
+				ss << argv[i++];
+				ss >> equipletID;
+			} else {
+				std::cerr << "--id requires one argument";
+				return -1;
+			}
 		}
 	}
 
 	// Set the id of the Equiplet
 	std::ostringstream ss;
-	ss << "Equiplet" << equipletId;
+	ss << "Equiplet" << equipletID;
 	const char* equipletName = ss.str().c_str();
 
 	ros::init(argc, argv, equipletName);
-	EquipletNode equipletNode(equipletId);
+	EquipletNode equipletNode(equipletID, blackboardIP);
 
 	ros::Rate poll_rate(10);
 	while (ros::ok()) {

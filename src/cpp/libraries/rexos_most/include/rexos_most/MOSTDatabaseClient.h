@@ -45,6 +45,28 @@ public:
 		connection.update("most.equiplet", mongo::Query(), BSON("$set" << BSON("safety" << state)));
 	}
 
+	int getSafetyState(){
+		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
+		if(cursor->more()){
+			auto entry = cursor->next();
+			if(entry.hasField("safety"))
+				return entry.getIntField("safety");
+		}
+
+		return -1;
+	}
+
+	int getOperationalState(){
+		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
+		if(cursor->more()){
+			auto entry = cursor->next();
+			if(entry.hasField("operational"))
+				return entry.getIntField("operational");
+		}
+
+		return -1;
+	}
+
 	ModuleData getModuleData(int moduleID) {
 		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules", QUERY("id" << moduleID));
 		if(cursor->more()) {
@@ -60,6 +82,10 @@ public:
 
 	void clearModuleData() {
 		connection.remove("most.modules", mongo::Query());
+	}
+
+	void sendEquipletCommand(std::string command, mongo::BSONObj args = mongo::BSONObj()){
+		connection.insert("most.equipletCommands", BSON("command" << command << "args" << args));
 	}
 
 	std::vector<ModuleData> getAllModuleData() {

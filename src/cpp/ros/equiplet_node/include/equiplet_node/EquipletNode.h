@@ -51,9 +51,9 @@
 /**
  * The equipletNode, will manage all modules and keep track of their states
  **/
-class EquipletNode: BlackboardSubscriber {
+class EquipletNode: public BlackboardSubscriber {
 public:
-	EquipletNode(int id = 1);
+	EquipletNode(int id, std::string blackboardIp);
 	virtual ~EquipletNode();
 	void blackboardReadCallback(std::string json);
 

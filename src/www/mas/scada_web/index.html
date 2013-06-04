@@ -68,7 +68,6 @@
 								$(".modulechangemodibutton", module).click(
 										function() {
 											$.ajax({
-												type: "post",
 												url: "remote/changeModuleModi",
 												data: $(this.form).serialize()
 											});

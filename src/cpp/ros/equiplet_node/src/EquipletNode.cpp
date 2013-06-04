@@ -35,7 +35,7 @@
  * Create a new EquipletNode
  * @param id The unique identifier of the Equiplet
  **/
-EquipletNode::EquipletNode(int id) :
+EquipletNode::EquipletNode(int id, std::string blackboardIp) :
 		equipletId(id), blackboardClient(NULL) {
 
 	if (mostDatabaseclient.getAllModuleData().size() > 0) {
@@ -48,7 +48,7 @@ EquipletNode::EquipletNode(int id) :
 			"/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService,
 			this);
 
-	blackboardClient = new BlackboardCppClient("localhost", "REXOS",
+	blackboardClient = new BlackboardCppClient(blackboardIp, "REXOS",
 			"blackboard", this);
 	blackboardClient->subscribe("instruction");
 
