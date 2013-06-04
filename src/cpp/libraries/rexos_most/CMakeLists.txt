@@ -38,4 +38,4 @@ add_library(rexos_most ${sources})
 target_link_libraries(rexos_most ${catkin_LIBRARIES} ${MONGO_LIBRARIES})
 add_dependencies(rexos_most rexos_most_gencpp)
 
-add_definitions("-std=c++11")
+add_definitions("-std=c++0x")
