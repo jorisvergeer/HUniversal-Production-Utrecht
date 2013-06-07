@@ -40,6 +40,7 @@
 #include <rexos_blackboard_cpp_client/BlackboardSubscriber.h>
 #include <rexos_utilities/Utilities.h>
 
+#include <rexos_most/ROSStateMachineActionProvider.h>
 #include <rexos_most/ModuleInfo.h>
 #include <rexos_most/MOSTState.h>
 #include <rexos_most/ModuleUpdate.h>
@@ -47,6 +48,10 @@
 
 #pragma GCC system_header
 #include <libjson/libjson.h>
+#include <actionlib/client/simple_action_client.h>
+
+typedef actionlib::SimpleActionClient<rexos_most::ChangeStateAction> ChangeStateActionClient;
+typedef actionlib::SimpleActionClient<rexos_most::ChangeModeAction> ChangeModeActionClient;
 
 /**
  * The equipletNode, will manage all modules and keep track of their states
@@ -75,6 +80,8 @@ private:
 	MOSTDatabaseClient mostDatabaseclient;
 
 	ros::NodeHandle nh;
+	ChangeStateActionClient changeStateClient;
+	ChangeModeActionClient changeModeClient;
 	ros::ServiceServer moduleUpdateServiceServer;
 
 	bool transitionSetup();

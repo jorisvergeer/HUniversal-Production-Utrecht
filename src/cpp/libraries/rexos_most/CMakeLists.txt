@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(rexos_most)
 
 ## Find catkin and any catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg message_generation)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs genmsg actionlib_msgs actionlib message_generation)
 find_package(Mongo)
 
 file(GLOB_RECURSE msgs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/msg" "*.msg")
@@ -15,8 +15,13 @@ add_service_files(
 DIRECTORY srv
 FILES ${srvs} )
 
+file(GLOB_RECURSE actions RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/action" "*.action")
+add_action_files(
+DIRECTORY action
+FILES ${actions} )
+
 generate_messages (
-	DEPENDENCIES std_msgs
+	DEPENDENCIES actionlib_msgs std_msgs
 )
 
 ## Declare a catkin package

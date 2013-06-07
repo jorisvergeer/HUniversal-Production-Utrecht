@@ -37,8 +37,8 @@
 #include "rexos_most/MOSTModi.h"
 #include "rexos_most/MOSTTransitions.h"
 
-#include <rexos_most/ChangeState.h>
-#include <rexos_most/ChangeModi.h>
+//#include <rexos_most/ChangeState.h>
+//#include <rexos_most/ChangeModi.h>
 
 namespace rexos_most {
 

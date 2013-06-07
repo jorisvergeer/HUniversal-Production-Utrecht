@@ -31,7 +31,7 @@
 #define ROSMOSTSTATEMACHINE_H
 
 #include "rexos_most/MOSTStateMachine.h"
-#include "rexos_most/ROSStateMachineServiceProvider.h"
+#include "rexos_most/ROSStateMachineActionProvider.h"
 
 namespace rexos_most {
 
@@ -42,7 +42,7 @@ public:
 	virtual ~ROSMOSTStateMachine();
 
 private:
-	ROSStateMachineServiceProvider serviceProvider;
+	ROSStateMachineActionProvider serviceProvider;
 };
 
 }
