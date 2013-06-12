@@ -36,7 +36,7 @@
 // @endcond
 
 DummyModuleNode::DummyModuleNode(int equipletID, int moduleID) :
-		rexos_most::ROSMOSTStateMachine(moduleID) {
+		rexos_statemachine::StateMachine() {
 
 	std::stringstream stringStream;
 	stringStream << NODE_NAME_BASE << "_" << equipletID << "_" << moduleID;
@@ -62,28 +62,20 @@ bool DummyModuleNode::outputJSON(rexos_std_srvs::Module::Request &req, rexos_std
 	return true;
 }
 
-bool DummyModuleNode::transitionSetup() {
+void DummyModuleNode::transitionSetup() {
 	ROS_INFO("Setup transition called");
-
-	return 1;
 }
 
-bool DummyModuleNode::transitionShutdown() {
+void DummyModuleNode::transitionShutdown() {
 	ROS_INFO("Shutdown transition called");
-
-	return 1;
 }
 
-bool DummyModuleNode::transitionStart() {
+void DummyModuleNode::transitionStart() {
 	ROS_INFO("Start transition called");
-
-	return 1;
 }
 
-bool DummyModuleNode::transitionStop() {
+void DummyModuleNode::transitionStop() {
 	ROS_INFO("Stop transition called");
-
-	return 1;
 }
 
 DummyModuleNode::~DummyModuleNode() {

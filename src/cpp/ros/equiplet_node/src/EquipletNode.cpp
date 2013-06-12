@@ -29,8 +29,8 @@
  **/
 
 #include <equiplet_node/EquipletNode.h>
-#include <rexos_most/ChangeStateAction.h>
-#include <rexos_most/ChangeModeAction.h>
+#include <rexos_statemachine/ChangeStateAction.h>
+#include <rexos_statemachine/ChangeModeAction.h>
 
 /**
  * Create a new EquipletNode
@@ -45,11 +45,11 @@ EquipletNode::EquipletNode(int id, std::string blackboardIp) :
 		ROS_WARN("Previous equiplet instance did not cleanup corrrectly");
 	}
 	mostDatabaseclient.clearModuleData();
-	mostDatabaseclient.setSafetyState(rexos_most::STATE_SAFE);
+	mostDatabaseclient.setSafetyState(rexos_statemachine::STATE_SAFE);
 
-	moduleUpdateServiceServer = nh.advertiseService(
-			"/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService,
-			this);
+//	moduleUpdateServiceServer = nh.advertiseService(
+//			"/most/equiplet/moduleUpdate", &EquipletNode::moduleUpdateService,
+//			this);
 
 	blackboardClient = new BlackboardCppClient(blackboardIp, "REXOS",
 			"blackboard", this);
@@ -119,7 +119,7 @@ void EquipletNode::callLookupHandler(std::string lookupType,
 	}
 }
 
-bool EquipletNode::changeModuleState(int moduleID,rexos_most::MOSTState state){
+bool EquipletNode::changeModuleState(int moduleID,rexos_statemachine::State state){
 //	rexos_most::ChangeStateGoal_ goal;
 //	goal.desiredState state;
 //	changeStateClient.sendGoal(goal,);
@@ -160,41 +160,41 @@ bool EquipletNode::transitionShutdown() {
 	return true;//succeeded;
 }
 
-bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
-		rexos_most::ModuleUpdate::Response& res) {
-	ROS_INFO("Received module update (id=%d, state=%s, modi=%s)", req.info.id,
-			rexos_most::MOSTState_txt[req.info.state],rexos_most::MOSTModi_txt[req.info.modi]);
-	MOSTDatabaseClient::ModuleData data;
-	data.id = req.info.id;
-	data.state = req.info.state;
-	data.modi = req.info.modi;
-	mostDatabaseclient.setModuleData(data);
-
-	rexos_most::MOSTState safetyState = rexos_most::STATE_SAFE;
-	auto moduleDatas = mostDatabaseclient.getAllModuleData();
-	for (auto it = moduleDatas.begin(); it != moduleDatas.end(); it++) {
-		rexos_most::MOSTState modState = (rexos_most::MOSTState) it->state;
-		rexos_most::MOSTState roundedState;
-		switch (modState) {
-		case rexos_most::STATE_SAFE:
-			roundedState = rexos_most::STATE_SAFE;
-			break;
-		case rexos_most::STATE_SETUP:
-		case rexos_most::STATE_SHUTDOWN:
-		case rexos_most::STATE_STANDBY:
-			roundedState = rexos_most::STATE_STANDBY;
-			break;
-		case rexos_most::STATE_START:
-		case rexos_most::STATE_STOP:
-		case rexos_most::STATE_NORMAL:
-			roundedState = rexos_most::STATE_NORMAL;
-		}
-
-		if(roundedState > safetyState){
-			safetyState = roundedState;
-		}
-
-		mostDatabaseclient.setSafetyState(safetyState);
-	}
-	return true;
-}
+//bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
+//		rexos_most::ModuleUpdate::Response& res) {
+//	ROS_INFO("Received module update (id=%d, state=%s, modi=%s)", req.info.id,
+//			rexos_statemachine::MOSTState_txt[req.info.state],rexos_statemachine::MOSTModi_txt[req.info.modi]);
+//	MOSTDatabaseClient::ModuleData data;
+//	data.id = req.info.id;
+//	data.state = req.info.state;
+//	data.modi = req.info.modi;
+//	mostDatabaseclient.setModuleData(data);
+//
+//	rexos_statemachine::State safetyState = rexos_statemachine::STATE_SAFE;
+//	auto moduleDatas = mostDatabaseclient.getAllModuleData();
+//	for (auto it = moduleDatas.begin(); it != moduleDatas.end(); it++) {
+//		rexos_statemachine::State modState = (rexos_statemachine::State) it->state;
+//		rexos_statemachine::State roundedState;
+//		switch (modState) {
+//		case rexos_statemachine::STATE_SAFE:
+//			roundedState = rexos_statemachine::STATE_SAFE;
+//			break;
+//		case rexos_statemachine::STATE_SETUP:
+//		case rexos_statemachine::STATE_SHUTDOWN:
+//		case rexos_statemachine::STATE_STANDBY:
+//			roundedState = rexos_statemachine::STATE_STANDBY;
+//			break;
+//		case rexos_statemachine::STATE_START:
+//		case rexos_statemachine::STATE_STOP:
+//		case rexos_statemachine::STATE_NORMAL:
+//			roundedState = rexos_statemachine::STATE_NORMAL;
+//		}
+//
+//		if(roundedState > safetyState){
+//			safetyState = roundedState;
+//		}
+//
+//		mostDatabaseclient.setSafetyState(safetyState);
+//	}
+//	return true;
+//}

@@ -4,8 +4,8 @@
 
 #include <auto_ptr.h>
 
-#include <rexos_most/MOSTModi.h>
-#include <rexos_most/MOSTState.h>
+#include <rexos_statemachine/State.h>
+#include <rexos_statemachine/Mode.h>
 
 #define MONGODB_HOST "145.89.191.131"
 
@@ -14,26 +14,26 @@ public:
 	struct ModuleData {
 		int id;
 		int state;
-		int modi;
+		int mode;
 
-		ModuleData(int id, rexos_most::MOSTState state, rexos_most::MOSTModi modi) :
-				id(id), state(state), modi(modi) {
+		ModuleData(int id, rexos_statemachine::State state, rexos_statemachine::Mode mode) :
+				id(id), state(state), mode(mode) {
 		}
 
 		ModuleData() :
-				id(-1), state(-1), modi(-1) {
+				id(-1), state(-1), mode(-1) {
 		}
 
 		static ModuleData fromBSON(const mongo::BSONObj& obj) {
 			ModuleData result;
 			result.id = obj.getIntField("id");
 			result.state = obj.getIntField("state");
-			result.modi =  obj.getIntField("modi");
+			result.mode =  obj.getIntField("mode");
 			return result;
 		}
 
 		mongo::BSONObj toBSON() const {
-			return BSON("id" << id << "state" << state << "modi" << modi);
+			return BSON("id" << id << "state" << state << "mode" << mode);
 		}
 	};
 
@@ -41,7 +41,7 @@ public:
 		connection.connect(MONGODB_HOST);
 	}
 
-	void setSafetyState(rexos_most::MOSTState state){
+	void setSafetyState(rexos_statemachine::State state){
 		connection.update("most.equiplet", mongo::Query(), BSON("$set" << BSON("safety" << state)));
 	}
 

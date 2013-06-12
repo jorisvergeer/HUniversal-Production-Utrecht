@@ -47,7 +47,7 @@
 #include <rexos_vision/FiducialDetector.h>
 #include <rexos_vision/PixelAndRealCoordinateTransformer.h>
 #include <rexos_vision/CrateTracker.h>
-#include "rexos_most/ROSMOSTStateMachine.h"
+#include <rexos_statemachine/StateMachine.h>
 
 #include <crate_locator_node/getCrate.h>
 #include <crate_locator_node/getAllCrates.h>
@@ -56,15 +56,15 @@
 /**
  * Locates the crate
  **/
-class CrateLocatorNode : public rexos_most::ROSMOSTStateMachine{
+class CrateLocatorNode : public rexos_statemachine::StateMachine{
 public:
 	CrateLocatorNode(int moduleID);
 	~CrateLocatorNode();
 
-	virtual bool transitionSetup();
-	virtual bool transitionShutdown();
-	virtual bool transitionStart();
-	virtual bool transitionStop();
+	virtual void transitionSetup();
+	virtual void transitionShutdown();
+	virtual void transitionStart();
+	virtual void transitionStop();
 
 	void run();
 	bool getCrate(crate_locator_node::getCrate::Request &req,crate_locator_node::getCrate::Response &res);

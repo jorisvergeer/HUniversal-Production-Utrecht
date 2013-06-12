@@ -35,22 +35,22 @@
 #include "rexos_std_srvs/Module.h"
 
 #include <rexos_utilities/Utilities.h>
-#include <rexos_most/ROSMOSTStateMachine.h>
+#include <rexos_statemachine/StateMachine.h>
 
 // GCC system header to suppress libjson warnings
 #pragma GCC system_header
 #include <libjson/libjson.h>
 // ---------------------------------------------
 
-class DummyModuleNode : public rexos_most::ROSMOSTStateMachine{
+class DummyModuleNode : public rexos_statemachine::StateMachine{
 public:
 	DummyModuleNode(int equipletID, int moduleID);
 	virtual ~DummyModuleNode();
 	
-	virtual bool transitionSetup();
-	virtual bool transitionShutdown();
-	virtual bool transitionStart();
-	virtual bool transitionStop();
+	virtual void transitionSetup();
+	virtual void transitionShutdown();
+	virtual void transitionStart();
+	virtual void transitionStop();
 
 	// services
 	bool outputJSON(rexos_std_srvs::Module::Request &req, rexos_std_srvs::Module::Response &res);

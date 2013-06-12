@@ -105,7 +105,7 @@ void process_moduleInfo(mg_connection* conn, mg_request_info* request_info) {
 	for (MOSTDatabaseClient::ModuleData module : modules) {
 		JSONNode jsonModule;
 		jsonModule.push_back(JSONNode("id", module.id));
-		jsonModule.push_back(JSONNode("modi", module.modi));
+		jsonModule.push_back(JSONNode("modi", module.mode));
 		jsonModule.push_back(JSONNode("state", module.state));
 		jsonModule.push_back(JSONNode("name", "TODO")); //TODO
 		jsonModule.push_back(JSONNode("type", "TODO")); //TODO

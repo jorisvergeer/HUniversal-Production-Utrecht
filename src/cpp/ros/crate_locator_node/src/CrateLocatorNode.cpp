@@ -69,7 +69,7 @@ void on_mouse(int event, int x, int y, int flags, void* param){
  * Subscribes to the camera node, starts the QR detector and opens a window to show the output.
  **/
 CrateLocatorNode::CrateLocatorNode(int moduleID) :
-		rexos_most::ROSMOSTStateMachine(moduleID),
+		rexos_statemachine::StateMachine(),
 		measurementCount(0),
 		measurements(0),
 		failCount(0),
@@ -403,9 +403,9 @@ void CrateLocatorNode::stopServices(){
  * Transition from Safe to Standby state
  * @return 0 if everything went OK else error
  **/
-bool CrateLocatorNode::transitionSetup(){
+void CrateLocatorNode::transitionSetup(){
 	ROS_INFO("Setup transition called");
-	return calibrate();
+	calibrate();
 }
 
 /**
@@ -413,16 +413,15 @@ bool CrateLocatorNode::transitionSetup(){
  * Will turn power off the motor
  * @return will be 0 if everything went ok else error
  **/
-bool CrateLocatorNode::transitionShutdown(){
+void CrateLocatorNode::transitionShutdown(){
 	ROS_INFO("Shutdown transition called");
-	return false;
 }
 
 /**
  * Transition from Standby to Normal state
  * @return will be 0 if everything went ok else error
  **/
-bool CrateLocatorNode::transitionStart(){
+void CrateLocatorNode::transitionStart(){
 	ROS_INFO("Start transition called");
 
 	std::cout << "[DEBUG] Waiting for subscription" << std::endl;
@@ -433,18 +432,16 @@ bool CrateLocatorNode::transitionStart(){
 	std::cout << "[DEBUG] Starting crateLocateCallback loop" << std::endl;
 
 	startServices();
-	return true;
 }
 
 /**
  * Transition from Normal to Standby state
  * @return will be 0 if everything went ok else error
  **/
-bool CrateLocatorNode::transitionStop(){
+void CrateLocatorNode::transitionStop(){
 	ROS_INFO("Stop transition called");
 	cameraSubscriber.shutdown();
 	stopServices();
-	return true;
 }
 /**
  * Main methods that starts the cratelocator node.

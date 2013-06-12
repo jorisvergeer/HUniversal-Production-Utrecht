@@ -1,7 +1,0 @@
-# Define the goal
-int32 desiredState
----
-# Define the result
-bool executed
----
-bool feedback
