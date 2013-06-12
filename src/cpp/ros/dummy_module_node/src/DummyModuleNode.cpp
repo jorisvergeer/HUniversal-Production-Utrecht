@@ -36,7 +36,7 @@
 // @endcond
 
 DummyModuleNode::DummyModuleNode(int equipletID, int moduleID) :
-		rexos_statemachine::StateMachine() {
+	rexos_statemachine::StateMachine(std::string(NODE_NAME_BASE) + "_" + std::to_string(equipletID) + "_" + std::to_string(moduleID)) {
 
 	std::stringstream stringStream;
 	stringStream << NODE_NAME_BASE << "_" << equipletID << "_" << moduleID;

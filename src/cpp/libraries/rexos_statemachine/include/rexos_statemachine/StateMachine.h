@@ -41,13 +41,18 @@
 #include <actionlib/server/simple_action_server.h>
 #include <rexos_statemachine/ChangeStateAction.h>
 #include <rexos_statemachine/ChangeModeAction.h>
+#include <rexos_statemachine/TransitionAction.h>
 
 namespace rexos_statemachine {
+
+typedef actionlib::SimpleActionServer<ChangeStateAction> ChangeStateActionServer;
+typedef actionlib::SimpleActionServer<ChangeModeAction> ChangeModeActionServer;
+typedef actionlib::SimpleActionServer<TransitionAction> TransitionActionServer;
 
 class StateMachine: public rexos_statemachine::Transitions {
 public:
 
-	StateMachine();
+	StateMachine(std::string nodeName);
 
 	virtual ~StateMachine();
 
@@ -66,6 +71,12 @@ public:
 	void onChangeStateService(const ChangeStateGoalConstPtr& goal);
 
 	void onChangeModeService(const ChangeModeGoalConstPtr& goal);
+
+	void onTransitionSetupService(TransitionActionServer* as);
+	void onTransitionShutdownService(TransitionActionServer* as);
+	void onTransitionStartService(TransitionActionServer* as);
+	void onTransitionStopService(TransitionActionServer* as);
+
 
 private:
 	bool changeState(rexos_statemachine::State newState);
@@ -143,11 +154,15 @@ private:
 
 	ChangeStateEntry currentChangeState;
 
-	typedef actionlib::SimpleActionServer<ChangeStateAction> ChangeStateActionServer;
-	typedef actionlib::SimpleActionServer<ChangeModeAction> ChangeModeActionServer;
 	ros::NodeHandle nodeHandle;
 	ChangeStateActionServer changeStateActionServer;
 	ChangeModeActionServer changeModeActionServer;
+
+	TransitionActionServer transitionSetupServer;
+	TransitionActionServer transitionShutdownServer;
+	TransitionActionServer transitionStartServer;
+	TransitionActionServer transitionStopServer;
+
 	ros::ServiceClient moduleUpdateServiceClient;
 
 	ChangeStateResult changeStateResult;

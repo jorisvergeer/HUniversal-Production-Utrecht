@@ -69,7 +69,7 @@ void on_mouse(int event, int x, int y, int flags, void* param){
  * Subscribes to the camera node, starts the QR detector and opens a window to show the output.
  **/
 CrateLocatorNode::CrateLocatorNode(int moduleID) :
-		rexos_statemachine::StateMachine(),
+		rexos_statemachine::StateMachine("crate_locator_node_" + moduleID),
 		measurementCount(0),
 		measurements(0),
 		failCount(0),

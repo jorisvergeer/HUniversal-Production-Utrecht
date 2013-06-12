@@ -23,3 +23,4 @@ add_executable(dummy_module_node src/DummyModuleNode.cpp)
 target_link_libraries(dummy_module_node ${catkin_LIBRARIES} ${LOG4CXX_LIBRARIES})
 add_dependencies(dummy_module_node dummy_module_node_gencpp)
 
+add_definitions("-std=c++0x")

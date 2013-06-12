@@ -38,12 +38,17 @@ using namespace rexos_statemachine;
  * Create a stateMachine
  * @param moduleID the unique identifier for the module that implements the statemachine
  **/
-StateMachine::StateMachine() :
+StateMachine::StateMachine(std::string nodeName) :
 		listener(NULL),
 		currentState(STATE_SAFE),
 		currentMode(MODE_NORMAL),
-		changeStateActionServer(nodeHandle, "change_state", boost::bind(&StateMachine::onChangeStateService, this, _1), false),
-		changeModeActionServer(nodeHandle, "change_mode", boost::bind(&StateMachine::onChangeModeService, this, _1), false)
+		changeStateActionServer(nodeHandle, nodeName + "/change_state", boost::bind(&StateMachine::onChangeStateService, this, _1), false),
+		changeModeActionServer(nodeHandle, nodeName + "/change_mode", boost::bind(&StateMachine::onChangeModeService, this, _1), false),
+		transitionSetupServer(nodeHandle, nodeName + "/transition_setup", boost::bind(&StateMachine::onTransitionSetupService, this, &transitionSetupServer), false),
+		transitionShutdownServer(nodeHandle, nodeName + "/transition_shutdown", boost::bind(&StateMachine::onTransitionShutdownService, this, &transitionShutdownServer), false),
+		transitionStartServer(nodeHandle, nodeName + "/transition_start", boost::bind(&StateMachine::onTransitionStartService, this, &transitionStartServer), false),
+		transitionStopServer(nodeHandle, nodeName + "/transition_stop", boost::bind(&StateMachine::onTransitionStopService, this, &transitionStopServer), false)
+
 {
 
 	statePair transitionSetupStatePair(STATE_SAFE, STATE_STANDBY);
@@ -86,6 +91,11 @@ StateMachine::StateMachine() :
 
 	changeStateActionServer.start();
 	changeModeActionServer.start();
+
+	transitionSetupServer.start();
+	transitionShutdownServer.start();
+	transitionStartServer.start();
+	transitionStopServer.start();
 }
 
 StateMachine::~StateMachine() {
@@ -132,6 +142,26 @@ void StateMachine::onChangeModeService(const ChangeModeGoalConstPtr& goal){
 			changeModeActionServer.setAborted(res);
 		}
 	changeModeActionServer.setSucceeded(res);
+}
+
+void StateMachine::onTransitionSetupService(TransitionActionServer* as){
+	transitionSetup();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionShutdownService(TransitionActionServer* as){
+	transitionShutdown();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionStartService(TransitionActionServer* as){
+	transitionStart();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionStopService(TransitionActionServer* as){
+	transitionStop();
+	as->setSucceeded();
 }
 
 /**
