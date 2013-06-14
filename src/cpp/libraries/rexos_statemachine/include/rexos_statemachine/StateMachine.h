@@ -68,14 +68,14 @@ public:
 
 	void setListener(Listener* listener);
 
-	void onChangeStateService(const ChangeStateGoalConstPtr& goal);
+	void onChangeStateAction(const ChangeStateGoalConstPtr& goal);
 
-	void onChangeModeService(const ChangeModeGoalConstPtr& goal);
+	void onChangeModeAction(const ChangeModeGoalConstPtr& goal);
 
-	void onTransitionSetupService(TransitionActionServer* as);
-	void onTransitionShutdownService(TransitionActionServer* as);
-	void onTransitionStartService(TransitionActionServer* as);
-	void onTransitionStopService(TransitionActionServer* as);
+	void onTransitionSetupAction(TransitionActionServer* as);
+	void onTransitionShutdownAction(TransitionActionServer* as);
+	void onTransitionStartAction(TransitionActionServer* as);
+	void onTransitionStopAction(TransitionActionServer* as);
 
 
 private:

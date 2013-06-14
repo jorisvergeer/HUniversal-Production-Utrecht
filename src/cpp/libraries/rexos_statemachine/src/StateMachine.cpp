@@ -42,12 +42,12 @@ StateMachine::StateMachine(std::string nodeName) :
 		listener(NULL),
 		currentState(STATE_SAFE),
 		currentMode(MODE_NORMAL),
-		changeStateActionServer(nodeHandle, nodeName + "/change_state", boost::bind(&StateMachine::onChangeStateService, this, _1), false),
-		changeModeActionServer(nodeHandle, nodeName + "/change_mode", boost::bind(&StateMachine::onChangeModeService, this, _1), false),
-		transitionSetupServer(nodeHandle, nodeName + "/transition_setup", boost::bind(&StateMachine::onTransitionSetupService, this, &transitionSetupServer), false),
-		transitionShutdownServer(nodeHandle, nodeName + "/transition_shutdown", boost::bind(&StateMachine::onTransitionShutdownService, this, &transitionShutdownServer), false),
-		transitionStartServer(nodeHandle, nodeName + "/transition_start", boost::bind(&StateMachine::onTransitionStartService, this, &transitionStartServer), false),
-		transitionStopServer(nodeHandle, nodeName + "/transition_stop", boost::bind(&StateMachine::onTransitionStopService, this, &transitionStopServer), false)
+		changeStateActionServer(nodeHandle, nodeName + "/change_state", boost::bind(&StateMachine::onChangeStateAction, this, _1), false),
+		changeModeActionServer(nodeHandle, nodeName + "/change_mode", boost::bind(&StateMachine::onChangeModeAction, this, _1), false),
+		transitionSetupServer(nodeHandle, nodeName + "/transition_setup", boost::bind(&StateMachine::onTransitionSetupAction, this, &transitionSetupServer), false),
+		transitionShutdownServer(nodeHandle, nodeName + "/transition_shutdown", boost::bind(&StateMachine::onTransitionShutdownAction, this, &transitionShutdownServer), false),
+		transitionStartServer(nodeHandle, nodeName + "/transition_start", boost::bind(&StateMachine::onTransitionStartAction, this, &transitionStartServer), false),
+		transitionStopServer(nodeHandle, nodeName + "/transition_stop", boost::bind(&StateMachine::onTransitionStopAction, this, &transitionStopServer), false)
 
 {
 
@@ -101,7 +101,7 @@ StateMachine::StateMachine(std::string nodeName) :
 StateMachine::~StateMachine() {
 }
 
-void StateMachine::onChangeStateService(const ChangeStateGoalConstPtr& goal){
+void StateMachine::onChangeStateAction(const ChangeStateGoalConstPtr& goal){
 	bool b = true;
 	switch (goal->desiredState) {
 		case rexos_statemachine::STATE_SAFE:
@@ -120,7 +120,7 @@ void StateMachine::onChangeStateService(const ChangeStateGoalConstPtr& goal){
 	if(!b)
 		changeStateActionServer.setAborted(changeStateResult);
 }
-void StateMachine::onChangeModeService(const ChangeModeGoalConstPtr& goal){
+void StateMachine::onChangeModeAction(const ChangeModeGoalConstPtr& goal){
 	ChangeModeResult res;
 	switch (goal->desiredMode) {
 		case rexos_statemachine::MODE_NORMAL:
@@ -144,22 +144,22 @@ void StateMachine::onChangeModeService(const ChangeModeGoalConstPtr& goal){
 	changeModeActionServer.setSucceeded(res);
 }
 
-void StateMachine::onTransitionSetupService(TransitionActionServer* as){
+void StateMachine::onTransitionSetupAction(TransitionActionServer* as){
 	transitionSetup();
 	as->setSucceeded();
 }
 
-void StateMachine::onTransitionShutdownService(TransitionActionServer* as){
+void StateMachine::onTransitionShutdownAction(TransitionActionServer* as){
 	transitionShutdown();
 	as->setSucceeded();
 }
 
-void StateMachine::onTransitionStartService(TransitionActionServer* as){
+void StateMachine::onTransitionStartAction(TransitionActionServer* as){
 	transitionStart();
 	as->setSucceeded();
 }
 
-void StateMachine::onTransitionStopService(TransitionActionServer* as){
+void StateMachine::onTransitionStopAction(TransitionActionServer* as){
 	transitionStop();
 	as->setSucceeded();
 }
