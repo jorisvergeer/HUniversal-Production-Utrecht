@@ -188,7 +188,15 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 
 	currentChangeState = it->second;
 	_setState(it->second.transition->transitionState);				//set the currentState on the transitionState
-	//(this->*it->second.transition->transitionFunctionPointer)();		//call transition state
+	TransitionActionClient *transitionActionClient = it->second.transition->transitionActionClient;
+	TransitionGoal goal;
+	transitionActionClient->sendGoal(goal);
+	if (transitionActionClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
+		//transition succeeded
+		_setState(it->first.first);
+	}else{
+		//abort state if possible
+	}
 
 	return true;
 }

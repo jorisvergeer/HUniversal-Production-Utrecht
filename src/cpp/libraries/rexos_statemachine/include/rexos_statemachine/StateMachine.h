@@ -131,13 +131,25 @@ private:
 
 	struct Transition {
 		TransitionActionClient *transitionActionClient;
+		//stateFunctionPtr transitionFunctionPointer;
 		rexos_statemachine::State transitionState;
+		//stateFunctionPtr abortTransitionFunctionPointer;
+		//rexos_statemachine::State abortTransitionState;
 	};
 
 	struct ChangeStateEntry{
 		Transition *transition,*abortTransition;
 		statePair previousNextState;
 	};
+
+//	struct transitionMapEntryValue {
+//		stateFunctionPtr transitionFunctionPointer;
+//		rexos_statemachine::State transitionState;
+//		statePair previousNextState;
+//		transitionMapEntryValue abortTransition;
+//		//stateFunctionPtr abortTransitionFunctionPointer;
+//		//rexos_statemachine::State abortTransitionState;
+//	};
 
 	typedef std::pair<statePair, ChangeStateEntry> transitionMapEntry;
 	typedef std::map<statePair, ChangeStateEntry> transitionMapType;
