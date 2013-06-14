@@ -39,6 +39,7 @@
 #include "rexos_statemachine/Listener.h"
 
 #include <actionlib/server/simple_action_server.h>
+#include <actionlib/client/simple_action_client.h>
 #include <rexos_statemachine/ChangeStateAction.h>
 #include <rexos_statemachine/ChangeModeAction.h>
 #include <rexos_statemachine/TransitionAction.h>
@@ -48,6 +49,7 @@ namespace rexos_statemachine {
 typedef actionlib::SimpleActionServer<ChangeStateAction> ChangeStateActionServer;
 typedef actionlib::SimpleActionServer<ChangeModeAction> ChangeModeActionServer;
 typedef actionlib::SimpleActionServer<TransitionAction> TransitionActionServer;
+typedef actionlib::SimpleActionClient<TransitionAction> TransitionActionClient;
 
 class StateMachine: public rexos_statemachine::Transitions {
 public:
@@ -128,25 +130,14 @@ private:
 	typedef std::pair<rexos_statemachine::State, rexos_statemachine::State> statePair;
 
 	struct Transition {
-		stateFunctionPtr transitionFunctionPointer;
+		TransitionActionClient *transitionActionClient;
 		rexos_statemachine::State transitionState;
-		//stateFunctionPtr abortTransitionFunctionPointer;
-		//rexos_statemachine::State abortTransitionState;
 	};
 
 	struct ChangeStateEntry{
 		Transition *transition,*abortTransition;
 		statePair previousNextState;
 	};
-
-//	struct transitionMapEntryValue {
-//		stateFunctionPtr transitionFunctionPointer;
-//		rexos_statemachine::State transitionState;
-//		statePair previousNextState;
-//		transitionMapEntryValue abortTransition;
-//		//stateFunctionPtr abortTransitionFunctionPointer;
-//		//rexos_statemachine::State abortTransitionState;
-//	};
 
 	typedef std::pair<statePair, ChangeStateEntry> transitionMapEntry;
 	typedef std::map<statePair, ChangeStateEntry> transitionMapType;

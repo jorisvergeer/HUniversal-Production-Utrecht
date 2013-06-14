@@ -56,10 +56,15 @@ StateMachine::StateMachine(std::string nodeName) :
 	statePair transitionStopStatePair(STATE_NORMAL, STATE_STANDBY);
 	statePair transitionShutdownStatePair(STATE_STANDBY, STATE_SAFE);
 
-	Transition *transitionShutdown = new Transition{&StateMachine::transitionShutdown, STATE_SHUTDOWN};
-	Transition *transitionSetup =new Transition{&StateMachine::transitionSetup, STATE_SETUP};
-	Transition *transitionStop =new Transition{&StateMachine::transitionStop, STATE_STOP};
-	Transition *transitionStart =new Transition{&StateMachine::transitionStart, STATE_START};
+	Transition *transitionShutdown = new Transition{new TransitionActionClient(nodeName + "/transition_shutdown",true), STATE_SHUTDOWN};
+	Transition *transitionSetup = new Transition{new TransitionActionClient(nodeName + "/transition_setup",true), STATE_SETUP};
+	Transition *transitionStop = new Transition{new TransitionActionClient(nodeName + "/transition_stop",true), STATE_STOP};
+	Transition *transitionStart = new Transition{new TransitionActionClient(nodeName + "/transition_start",true), STATE_START};
+
+	// Transition *transitionShutdown = new Transition{&StateMachine::transitionShutdown, STATE_SHUTDOWN};
+	// Transition *transitionSetup =new Transition{&StateMachine::transitionSetup, STATE_SETUP};
+	// Transition *transitionStop =new Transition{&StateMachine::transitionStop, STATE_STOP};
+	// Transition *transitionStart =new Transition{&StateMachine::transitionStart, STATE_START};
 
 	ChangeStateEntry changeStateEntryShutdown = {transitionShutdown,NULL,transitionShutdownStatePair};
 	ChangeStateEntry changeStateEntrySetup = {transitionSetup,transitionShutdown,transitionSetupStatePair};
@@ -183,7 +188,7 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 
 	currentChangeState = it->second;
 	_setState(it->second.transition->transitionState);				//set the currentState on the transitionState
-	(this->*it->second.transition->transitionFunctionPointer)();		//call transition state
+	//(this->*it->second.transition->transitionFunctionPointer)();		//call transition state
 
 	return true;
 }
@@ -196,7 +201,7 @@ void StateMachine::setTransitionSucceeded(bool successed){
 		_setState(currentChangeState.previousNextState.second);
 	} else if(currentState != currentChangeState.abortTransition->transitionState){
 		_setState(currentChangeState.abortTransition->transitionState);
-		(this->*currentChangeState.abortTransition->transitionFunctionPointer)();		//call transition state
+		//(this->*currentChangeState.abortTransition->transitionFunctionPointer)();		//call transition state
 	}else{
 		//error!!!
 		_setState(currentChangeState.previousNextState.first);
