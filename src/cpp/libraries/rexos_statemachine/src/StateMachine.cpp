@@ -186,16 +186,21 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 		return false;
 	}
 
-	currentChangeState = it->second;
-	_setState(it->second.transition->transitionState);				//set the currentState on the transitionState
-	TransitionActionClient *transitionActionClient = it->second.transition->transitionActionClient;
+	ChangeStateEntry changeStateEntry = it->second;
+	_setState(changeStateEntry.transition->transitionState);				//set the currentState on the transitionState
+	TransitionActionClient* transitionActionClient = changeStateEntry.transition->transitionActionClient;
 	TransitionGoal goal;
 	transitionActionClient->sendGoal(goal);
 	if (transitionActionClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
 		//transition succeeded
-		_setState(it->first.first);
+		_setState(changeStateEntry.previousNextState.second);
+	}else if(currentState != changeStateEntry.abortTransition->transitionState){
+		//abort method
+		_setState(changeStateEntry.abortTransition->transitionState);
+		transitionActionClient = changeStateEntry.abortTransition->transitionActionClient;
+		transitionActionClient->sendGoal(goal);
 	}else{
-		//abort state if possible
+		//transition without an abort transition failed such as 'stop/shutdown' transition
 	}
 
 	return true;
