@@ -2,7 +2,7 @@
 
 #include <mongo/client/dbclient.h>
 
-#include <auto_ptr.h>
+#include <memory>
 
 #include <rexos_statemachine/State.h>
 #include <rexos_statemachine/Mode.h>
@@ -46,7 +46,7 @@ public:
 	}
 
 	int getSafetyState(){
-		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
+		std::unique_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
 		if(cursor->more()){
 			auto entry = cursor->next();
 			if(entry.hasField("safety"))
@@ -57,7 +57,7 @@ public:
 	}
 
 	int getOperationalState(){
-		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
+		std::unique_ptr<mongo::DBClientCursor> cursor = connection.query("most.equiplet", mongo::Query());
 		if(cursor->more()){
 			auto entry = cursor->next();
 			if(entry.hasField("operational"))
@@ -68,7 +68,7 @@ public:
 	}
 
 	ModuleData getModuleData(int moduleID) {
-		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules", QUERY("id" << moduleID));
+		std::unique_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules", QUERY("id" << moduleID));
 		if(cursor->more()) {
 			mongo::BSONObj p = cursor->next();
 			return ModuleData::fromBSON(p);
@@ -90,7 +90,7 @@ public:
 
 	std::vector<ModuleData> getAllModuleData() {
 		std::vector<ModuleData> result;
-		std::auto_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules");
+		std::unique_ptr<mongo::DBClientCursor> cursor = connection.query("most.modules");
 		while(cursor->more()){
 			result.push_back(ModuleData::fromBSON(cursor->next()));
 		}

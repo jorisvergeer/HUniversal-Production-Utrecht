@@ -30,6 +30,8 @@
 
 #include <equiplet_node/EquipletNode.h>
 
+const char* DEFAULT_BLACKBOARD_IP = "145.89.191.131";
+
 static void show_usage(std::string name) {
 	std::cerr << "Usage: " << name << " <options(s)>\n" << "Options:\n"
 			<< "\t--help\t\tShow this help message\n"
@@ -38,7 +40,7 @@ static void show_usage(std::string name) {
 }
 
 int main(int argc, char **argv) {
-	std::string blackboardIP = "145.89.191.131";
+	std::string blackboardIP = DEFAULT_BLACKBOARD_IP;
 	int equipletID = 1;
 
 	for (int i = 0; i < argc; i++) {
@@ -66,9 +68,7 @@ int main(int argc, char **argv) {
 	}
 
 	// Set the id of the Equiplet
-	std::ostringstream ss;
-	ss << "Equiplet" << equipletID;
-	const char* equipletName = ss.str().c_str();
+	std::string equipletName = std::string("equiplet_") + std::to_string(equipletID);
 
 	ros::init(argc, argv, equipletName);
 	EquipletNode equipletNode(equipletID, blackboardIP);
