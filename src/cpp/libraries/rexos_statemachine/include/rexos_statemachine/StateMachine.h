@@ -66,8 +66,6 @@ public:
 
 	rexos_statemachine::Mode getCurrentMode();
 
-	void setTransitionSucceeded(bool successed);
-
 	void setListener(Listener* listener);
 
 	void onChangeStateAction(const ChangeStateGoalConstPtr& goal);
@@ -154,8 +152,6 @@ private:
 	typedef std::pair<statePair, ChangeStateEntry> transitionMapEntry;
 	typedef std::map<statePair, ChangeStateEntry> transitionMapType;
 	transitionMapType transitionMap;
-
-	ChangeStateEntry currentChangeState;
 
 	ros::NodeHandle nodeHandle;
 	ChangeStateActionServer changeStateActionServer;

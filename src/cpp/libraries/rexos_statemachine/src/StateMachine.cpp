@@ -202,27 +202,10 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 	}else{
 		//transition without an abort transition failed such as 'stop/shutdown' transition
 	}
+	_forceToAllowedState();
 
 	return true;
 }
-
-void StateMachine::setTransitionSucceeded(bool successed){
-	changeStateResult.executed = successed;
-	changeStateActionServer.setSucceeded(changeStateResult);
-
-	if (successed) {
-		_setState(currentChangeState.previousNextState.second);
-	} else if(currentState != currentChangeState.abortTransition->transitionState){
-		_setState(currentChangeState.abortTransition->transitionState);
-		//(this->*currentChangeState.abortTransition->transitionFunctionPointer)();		//call transition state
-	}else{
-		//error!!!
-		_setState(currentChangeState.previousNextState.first);
-	}
-
-	_forceToAllowedState();
-}
-
 
 State StateMachine::getCurrentState() {
 	return currentState;
