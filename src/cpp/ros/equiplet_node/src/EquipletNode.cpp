@@ -42,7 +42,7 @@ EquipletNode::EquipletNode(int id, std::string blackboardIp) :
 		equipletId(id), blackboardClient(NULL) {
 
 	if (mostDatabaseclient.getAllModuleData().size() > 0) {
-		ROS_WARN("Previous equiplet instance did not cleanup corrrectly");
+		ROS_WARN("Previous equiplet instance did not cleanup correctly");
 	}
 	mostDatabaseclient.clearModuleData();
 	mostDatabaseclient.setSafetyState(rexos_statemachine::STATE_SAFE);
