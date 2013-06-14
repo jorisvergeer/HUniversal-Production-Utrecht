@@ -43,6 +43,8 @@
 #include <rexos_statemachine/StateMachine.h>
 #include <rexos_most/MOSTDatabaseClient.h>
 
+#include <equiplet_node/ModuleRegistry.h>
+
 #pragma GCC system_header
 #include <libjson/libjson.h>
 #include <actionlib/client/simple_action_client.h>
@@ -53,11 +55,18 @@ typedef actionlib::SimpleActionClient<rexos_statemachine::ChangeModeAction> Chan
 /**
  * The equipletNode, will manage all modules and keep track of their states
  **/
-class EquipletNode: public BlackboardSubscriber {
+class EquipletNode: public BlackboardSubscriber, rexos_statemachine::StateMachine {
 public:
+	static std::string nameFromId(int id){
+		return std::string("equiplet_") + std::to_string(id);
+	}
+
 	EquipletNode(int id, std::string blackboardIp);
 	virtual ~EquipletNode();
 	void blackboardReadCallback(std::string json);
+
+	std::string getName();
+	ros::NodeHandle& getNodeHandle();
 
 private:
 	void callLookupHandler(std::string lookupType, std::string lookupID, environment_communication_msgs::Map payload);
@@ -77,12 +86,14 @@ private:
 	MOSTDatabaseClient mostDatabaseclient;
 
 	ros::NodeHandle nh;
-	ChangeStateActionClient changeStateClient;
-	ChangeModeActionClient changeModeClient;
 	ros::ServiceServer moduleUpdateServiceServer;
 
+	equiplet_node::ModuleRegistry moduleRegistry;
+
 	void changeEquipletState();
-	bool transitionSetup();
-	bool transitionShutdown();
+	void transitionSetup();
+	void transitionShutdown();
+	void transitionStart();
+	void transitionStop();
 	bool changeModuleState(int moduleID,rexos_statemachine::State state);
 };

@@ -37,9 +37,10 @@
  * @param id The unique identifier of the Equiplet
  **/
 EquipletNode::EquipletNode(int id, std::string blackboardIp) :
-		changeStateClient("change_state",true),
-		changeModeClient("change_mode",true),
-		equipletId(id), blackboardClient(NULL) {
+		StateMachine(nameFromId(id)),
+		moduleRegistry(nameFromId(id), id),
+		equipletId(id),
+		blackboardClient(NULL) {
 
 	if (mostDatabaseclient.getAllModuleData().size() > 0) {
 		ROS_WARN("Previous equiplet instance did not cleanup correctly");
@@ -56,6 +57,8 @@ EquipletNode::EquipletNode(int id, std::string blackboardIp) :
 	blackboardClient->subscribe("instruction");
 
 	std::cout << "Connected!" << std::endl;
+
+	moduleRegistry.setNewRegistrationsAllowed(true);
 }
 
 /**
@@ -92,6 +95,14 @@ void EquipletNode::blackboardReadCallback(std::string json) {
 	ss << "/";
 	ss << command;
 	blackboardClient->removeOldestMessage();
+}
+
+std::string EquipletNode::getName() {
+	return nameFromId(equipletId);
+}
+
+ros::NodeHandle& EquipletNode::getNodeHandle() {
+	return nh;
 }
 
 /**
@@ -138,7 +149,8 @@ bool EquipletNode::changeModuleState(int moduleID,rexos_statemachine::State stat
 	return true;
 }
 
-bool EquipletNode::transitionSetup() {
+void EquipletNode::transitionSetup() {
+	moduleRegistry.setNewRegistrationsAllowed(false);
 //	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
 //	for (int i = 0; i < moduleData.size(); i++) {
 //		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_STANDBY))
@@ -147,17 +159,24 @@ bool EquipletNode::transitionSetup() {
 //			return false;
 //		}
 //	}
-	return true;
+//	return true;
 }
 
-bool EquipletNode::transitionShutdown() {
+void EquipletNode::transitionShutdown() {
+	moduleRegistry.setNewRegistrationsAllowed(true);
 //	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
 //	bool succeeded = true;
 //	for (int i = 0; i < moduleData.size(); i++) {
 //		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_SAFE))
 //			succeeded = false;
 //	}
-	return true;//succeeded;
+//	return true;//succeeded;
+}
+
+void EquipletNode::transitionStart() {
+}
+
+void EquipletNode::transitionStop() {
 }
 
 //bool EquipletNode::moduleUpdateService(rexos_most::ModuleUpdate::Request& req,
