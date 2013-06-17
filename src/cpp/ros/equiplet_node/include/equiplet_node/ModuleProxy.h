@@ -39,6 +39,8 @@ private:
 	bool onStateChangeServiceCallback(StateUpdateRequest &req, StateUpdateResponse &res);
 	bool onModeChangeServiceCallback(ModeUpdateRequest &req, ModeUpdateResponse &res);
 
+	std::string moduleNodeName;
+
 	ros::NodeHandle nodeHandle;
 
 	ChangeStateActionClient changeStateActionClient;

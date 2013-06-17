@@ -35,14 +35,14 @@
 #include "rexos_std_srvs/Module.h"
 
 #include <rexos_utilities/Utilities.h>
-#include <rexos_statemachine/StateMachine.h>
+#include <rexos_statemachine/ModuleStateMachine.h>
 
 // GCC system header to suppress libjson warnings
 #pragma GCC system_header
 #include <libjson/libjson.h>
 // ---------------------------------------------
 
-class DummyModuleNode : public rexos_statemachine::StateMachine{
+class DummyModuleNode : public rexos_statemachine::ModuleStateMachine{
 public:
 	DummyModuleNode(int equipletID, int moduleID);
 	virtual ~DummyModuleNode();

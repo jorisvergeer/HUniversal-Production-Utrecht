@@ -33,7 +33,9 @@ void ModuleRegistry::setNewRegistrationsAllowed(bool allowed){
 }
 
 bool ModuleRegistry::onRegisterServiceModuleCallback(RegisterModule::Request &req, RegisterModule::Response &res) {
+	ROS_INFO("ModuleRegistry: New module %s with id %d registering", req.name.c_str(), req.id);
 	if(!newRegistrationsAllowed){
+		ROS_INFO("registration of new module not allowed");
 		return false;
 	}
 
@@ -43,6 +45,8 @@ bool ModuleRegistry::onRegisterServiceModuleCallback(RegisterModule::Request &re
 			equipletId,
 			req.id);
 	registeredModules.push_back(proxy);
+
+	ROS_INFO("registration successful");
 
 	return true;
 }
