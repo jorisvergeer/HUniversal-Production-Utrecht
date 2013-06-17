@@ -14,9 +14,9 @@
 
 #include <equiplet_node/ModuleProxy.h>
 
-class EquipletNode;
-
 namespace equiplet_node {
+
+class EquipletNode;
 
 class ModuleRegistry {
 public:

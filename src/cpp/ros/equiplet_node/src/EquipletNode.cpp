@@ -32,6 +32,8 @@
 #include <rexos_statemachine/ChangeStateAction.h>
 #include <rexos_statemachine/ChangeModeAction.h>
 
+using namespace equiplet_node;
+
 /**
  * Create a new EquipletNode
  * @param id The unique identifier of the Equiplet
@@ -154,9 +156,8 @@ void EquipletNode::transitionSetup() {
 
 	std::vector<ModuleProxy*> modules = moduleRegistry.getRigisteredModules();
 	for (int i = 0; i < modules.size(); i++) {
-		modules->changeState(rexos_statemachine::STATE_STANDBY);
+		modules[i]->changeState(rexos_statemachine::STATE_STANDBY);
 	}
-	return true;
 }
 
 void EquipletNode::transitionShutdown() {
@@ -164,9 +165,8 @@ void EquipletNode::transitionShutdown() {
 
 	std::vector<ModuleProxy*> modules = moduleRegistry.getRigisteredModules();
 	for (int i = 0; i < modules.size(); i++) {
-		modules->changeState(rexos_statemachine::STATE_SAFE);
+		modules[i]->changeState(rexos_statemachine::STATE_SAFE);
 	}
-	return true;
 }
 
 void EquipletNode::transitionStart() {

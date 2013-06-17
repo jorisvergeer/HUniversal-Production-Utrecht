@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 	std::string equipletName = std::string("equiplet_") + std::to_string(equipletID);
 
 	ros::init(argc, argv, equipletName);
-	EquipletNode equipletNode(equipletID, blackboardIP);
+	equiplet_node::EquipletNode equipletNode(equipletID, blackboardIP);
 
 	ros::Rate poll_rate(10);
 	while (ros::ok()) {

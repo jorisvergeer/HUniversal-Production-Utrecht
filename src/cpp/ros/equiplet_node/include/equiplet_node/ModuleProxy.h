@@ -21,6 +21,8 @@
 
 namespace equiplet_node {
 
+class EquipletNode;
+
 typedef actionlib::SimpleActionClient<rexos_statemachine::ChangeStateAction> ChangeStateActionClient;
 typedef actionlib::SimpleActionClient<rexos_statemachine::ChangeModeAction> ChangeModeActionClient;
 

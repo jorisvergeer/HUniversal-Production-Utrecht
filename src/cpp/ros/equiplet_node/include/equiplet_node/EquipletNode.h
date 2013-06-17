@@ -27,7 +27,6 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
-
 #pragma once
 
 #include "ros/ros.h"
@@ -44,10 +43,13 @@
 #include <rexos_most/MOSTDatabaseClient.h>
 
 #include <equiplet_node/ModuleRegistry.h>
+#include <equiplet_node/ModuleProxy.h>
 
 #pragma GCC system_header
 #include <libjson/libjson.h>
 #include <actionlib/client/simple_action_client.h>
+
+namespace equiplet_node {
 
 typedef actionlib::SimpleActionClient<rexos_statemachine::ChangeStateAction> ChangeStateActionClient;
 typedef actionlib::SimpleActionClient<rexos_statemachine::ChangeModeAction> ChangeModeActionClient;
@@ -97,3 +99,5 @@ private:
 	void transitionStop();
 	bool changeModuleState(int moduleID,rexos_statemachine::State state);
 };
+
+}
