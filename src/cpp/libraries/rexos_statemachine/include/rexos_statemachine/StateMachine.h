@@ -52,9 +52,9 @@ typedef actionlib::SimpleActionServer<TransitionAction> TransitionActionServer;
 typedef actionlib::SimpleActionClient<TransitionAction> TransitionActionClient;
 
 class StateMachine: public rexos_statemachine::Transitions {
-protected:
-	StateMachine(std::string nodeName);
 public:
+
+	StateMachine(std::string nodeName);
 
 	virtual ~StateMachine();
 
@@ -72,6 +72,7 @@ public:
 
 	void onChangeModeAction(const ChangeModeGoalConstPtr& goal);
 
+private:
 	void onTransitionSetupAction(TransitionActionServer* as);
 	void onTransitionShutdownAction(TransitionActionServer* as);
 	void onTransitionStartAction(TransitionActionServer* as);
@@ -155,6 +156,7 @@ private:
 	typedef std::map<statePair, ChangeStateEntry> transitionMapType;
 	transitionMapType transitionMap;
 
+	ros::NodeHandle nodeHandle;
 	ChangeStateActionServer changeStateActionServer;
 	ChangeModeActionServer changeModeActionServer;
 

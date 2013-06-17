@@ -32,6 +32,10 @@ void ModuleRegistry::setNewRegistrationsAllowed(bool allowed){
 	newRegistrationsAllowed = allowed;
 }
 
+std::vector<ModuleProxy*> ModuleRegistry::getRigisteredModules(){
+	return registeredModules;
+}
+
 bool ModuleRegistry::onRegisterServiceModuleCallback(RegisterModule::Request &req, RegisterModule::Response &res) {
 	ROS_INFO("ModuleRegistry: New module %s with id %d registering", req.name.c_str(), req.id);
 	if(!newRegistrationsAllowed){

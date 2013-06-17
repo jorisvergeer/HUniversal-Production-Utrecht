@@ -48,7 +48,6 @@ StateMachine::StateMachine(std::string nodeName) :
 		transitionShutdownServer(nodeHandle, nodeName + "/transition_shutdown", boost::bind(&StateMachine::onTransitionShutdownAction, this, &transitionShutdownServer), false),
 		transitionStartServer(nodeHandle, nodeName + "/transition_start", boost::bind(&StateMachine::onTransitionStartAction, this, &transitionStartServer), false),
 		transitionStopServer(nodeHandle, nodeName + "/transition_stop", boost::bind(&StateMachine::onTransitionStopAction, this, &transitionStopServer), false)
-
 {
 
 	statePair transitionSetupStatePair(STATE_SAFE, STATE_STANDBY);
@@ -61,11 +60,6 @@ StateMachine::StateMachine(std::string nodeName) :
 	Transition *transitionStop = new Transition{new TransitionActionClient(nodeName + "/transition_stop",true), STATE_STOP};
 	Transition *transitionStart = new Transition{new TransitionActionClient(nodeName + "/transition_start",true), STATE_START};
 
-	// Transition *transitionShutdown = new Transition{&StateMachine::transitionShutdown, STATE_SHUTDOWN};
-	// Transition *transitionSetup =new Transition{&StateMachine::transitionSetup, STATE_SETUP};
-	// Transition *transitionStop =new Transition{&StateMachine::transitionStop, STATE_STOP};
-	// Transition *transitionStart =new Transition{&StateMachine::transitionStart, STATE_START};
-
 	ChangeStateEntry changeStateEntryShutdown = {transitionShutdown,NULL,transitionShutdownStatePair};
 	ChangeStateEntry changeStateEntrySetup = {transitionSetup,transitionShutdown,transitionSetupStatePair};
 	ChangeStateEntry changeStateEntryStop = {transitionStop,NULL,transitionStopStatePair};
@@ -75,19 +69,6 @@ StateMachine::StateMachine(std::string nodeName) :
 	transitionMap[transitionStartStatePair]= {transitionStart,transitionStop};
 	transitionMap[transitionStopStatePair]= {transitionStop,NULL};
 	transitionMap[transitionShutdownStatePair]= {transitionShutdown,NULL};
-
-
-//	transitionMap[statePair(STATE_SAFE, STATE_STANDBY)]= {
-//		&StateMachine::transitionSetup, STATE_SETUP,
-//		&StateMachine::transitionShutdown, STATE_SHUTDOWN};
-//	transitionMap[statePair(STATE_STANDBY, STATE_NORMAL)] = {
-//		&StateMachine::transitionStart, STATE_START,
-//		&StateMachine::transitionStop, STATE_STOP};
-//	transitionMap[statePair(STATE_NORMAL, STATE_STANDBY)] =
-//	{	&StateMachine::transitionStop, STATE_STOP, NULL, STATE_NOSTATE};
-//	transitionMap[statePair(STATE_STANDBY, STATE_SAFE)]= {
-//		&StateMachine::transitionShutdown, STATE_SHUTDOWN, NULL,
-//		STATE_NOSTATE};
 
 	modiPossibleStates[MODE_NORMAL] = {STATE_NORMAL,STATE_STANDBY,STATE_SAFE};
 	modiPossibleStates[MODE_ERROR] = {STATE_STANDBY,STATE_SAFE};
@@ -149,26 +130,6 @@ void StateMachine::onChangeModeAction(const ChangeModeGoalConstPtr& goal){
 	changeModeActionServer.setSucceeded(res);
 }
 
-void StateMachine::onTransitionSetupAction(TransitionActionServer* as){
-	transitionSetup();
-	as->setSucceeded();
-}
-
-void StateMachine::onTransitionShutdownAction(TransitionActionServer* as){
-	transitionShutdown();
-	as->setSucceeded();
-}
-
-void StateMachine::onTransitionStartAction(TransitionActionServer* as){
-	transitionStart();
-	as->setSucceeded();
-}
-
-void StateMachine::onTransitionStopAction(TransitionActionServer* as){
-	transitionStop();
-	as->setSucceeded();
-}
-
 /**
  * Callback for the requestStateChange topic
  * Will lookup the transition function and execute it
@@ -205,6 +166,26 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 	_forceToAllowedState();
 
 	return true;
+}
+
+void StateMachine::onTransitionSetupAction(TransitionActionServer* as){
+	transitionSetup();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionShutdownAction(TransitionActionServer* as){
+	transitionShutdown();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionStartAction(TransitionActionServer* as){
+	transitionStart();
+	as->setSucceeded();
+}
+
+void StateMachine::onTransitionStopAction(TransitionActionServer* as){
+	transitionStop();
+	as->setSucceeded();
 }
 
 State StateMachine::getCurrentState() {

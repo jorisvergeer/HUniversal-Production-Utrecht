@@ -14,9 +14,9 @@
 
 #include <equiplet_node/ModuleProxy.h>
 
-class EquipletNode;
-
 namespace equiplet_node {
+
+class EquipletNode;
 
 class ModuleRegistry {
 public:
@@ -24,6 +24,8 @@ public:
 	virtual ~ModuleRegistry();
 
 	void setNewRegistrationsAllowed(bool allowed);
+
+	std::vector<ModuleProxy*> getRigisteredModules();
 private:
 	bool onRegisterServiceModuleCallback(RegisterModule::Request &req, RegisterModule::Response &res);
 
