@@ -151,26 +151,22 @@ bool EquipletNode::changeModuleState(int moduleID,rexos_statemachine::State stat
 
 void EquipletNode::transitionSetup() {
 	moduleRegistry.setNewRegistrationsAllowed(false);
-//	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
-//	for (int i = 0; i < moduleData.size(); i++) {
-//		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_STANDBY))
-//		{
-//			//Module isn't possible to set standby (error)
-//			return false;
-//		}
-//	}
-//	return true;
+
+	std::vector<ModuleProxy*> modules = moduleRegistry.getRigisteredModules();
+	for (int i = 0; i < modules.size(); i++) {
+		modules->changeState(rexos_statemachine::STATE_STANDBY);
+	}
+	return true;
 }
 
 void EquipletNode::transitionShutdown() {
 	moduleRegistry.setNewRegistrationsAllowed(true);
-//	std::vector<MOSTDatabaseClient::ModuleData> moduleData = mostDatabaseclient.getAllModuleData();
-//	bool succeeded = true;
-//	for (int i = 0; i < moduleData.size(); i++) {
-//		if(!changeModuleState(moduleData[i].id,rexos_most::STATE_SAFE))
-//			succeeded = false;
-//	}
-//	return true;//succeeded;
+
+	std::vector<ModuleProxy*> modules = moduleRegistry.getRigisteredModules();
+	for (int i = 0; i < modules.size(); i++) {
+		modules->changeState(rexos_statemachine::STATE_SAFE);
+	}
+	return true;
 }
 
 void EquipletNode::transitionStart() {

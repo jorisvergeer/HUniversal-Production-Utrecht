@@ -24,6 +24,8 @@ public:
 	virtual ~ModuleRegistry();
 
 	void setNewRegistrationsAllowed(bool allowed);
+
+	std::vector<ModuleProxy*> getRigisteredModules();
 private:
 	bool onRegisterServiceModuleCallback(RegisterModule::Request &req, RegisterModule::Response &res);
 
