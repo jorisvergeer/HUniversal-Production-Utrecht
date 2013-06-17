@@ -156,7 +156,6 @@ private:
 	typedef std::map<statePair, ChangeStateEntry> transitionMapType;
 	transitionMapType transitionMap;
 
-	ros::NodeHandle nodeHandle;
 	ChangeStateActionServer changeStateActionServer;
 	ChangeModeActionServer changeModeActionServer;
 
