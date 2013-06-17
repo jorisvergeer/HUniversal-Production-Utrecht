@@ -72,13 +72,12 @@ public:
 
 	void onChangeModeAction(const ChangeModeGoalConstPtr& goal);
 
+private:
 	void onTransitionSetupAction(TransitionActionServer* as);
 	void onTransitionShutdownAction(TransitionActionServer* as);
 	void onTransitionStartAction(TransitionActionServer* as);
 	void onTransitionStopAction(TransitionActionServer* as);
-
-
-private:
+	
 	bool changeState(rexos_statemachine::State newState);
 
 	bool changeMode(rexos_statemachine::Mode newMode);
