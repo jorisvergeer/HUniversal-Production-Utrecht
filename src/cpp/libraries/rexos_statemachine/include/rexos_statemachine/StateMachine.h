@@ -128,7 +128,7 @@ private:
 	 * the value: functionpointer of the transition while abort
 	 **/
 
-	typedef std::pair<rexos_statemachine::State, rexos_statemachine::State> statePair;
+	typedef std::pair<rexos_statemachine::State, rexos_statemachine::State> StatePair;
 
 	struct Transition {
 		TransitionActionClient *transitionActionClient;
@@ -140,7 +140,7 @@ private:
 
 	struct ChangeStateEntry{
 		Transition *transition,*abortTransition;
-		statePair previousNextState;
+		StatePair statePair;
 	};
 
 //	struct transitionMapEntryValue {
@@ -152,8 +152,8 @@ private:
 //		//rexos_statemachine::State abortTransitionState;
 //	};
 
-	typedef std::pair<statePair, ChangeStateEntry> transitionMapEntry;
-	typedef std::map<statePair, ChangeStateEntry> transitionMapType;
+	typedef std::pair<StatePair, ChangeStateEntry> transitionMapEntry;
+	typedef std::map<StatePair, ChangeStateEntry> transitionMapType;
 	transitionMapType transitionMap;
 
 	ChangeStateActionServer changeStateActionServer;

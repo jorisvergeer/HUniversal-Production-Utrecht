@@ -50,10 +50,10 @@ StateMachine::StateMachine(std::string nodeName) :
 		transitionStopServer(nodeHandle, nodeName + "/transition_stop", boost::bind(&StateMachine::onTransitionStopAction, this, &transitionStopServer), false)
 {
 
-	statePair transitionSetupStatePair(STATE_SAFE, STATE_STANDBY);
-	statePair transitionStartStatePair(STATE_STANDBY, STATE_NORMAL);
-	statePair transitionStopStatePair(STATE_NORMAL, STATE_STANDBY);
-	statePair transitionShutdownStatePair(STATE_STANDBY, STATE_SAFE);
+	StatePair transitionSetupStatePair(STATE_SAFE, STATE_STANDBY);
+	StatePair transitionStartStatePair(STATE_STANDBY, STATE_NORMAL);
+	StatePair transitionStopStatePair(STATE_NORMAL, STATE_STANDBY);
+	StatePair transitionShutdownStatePair(STATE_STANDBY, STATE_SAFE);
 
 	Transition *transitionShutdown = new Transition{new TransitionActionClient(nodeName + "/transition_shutdown",true), STATE_SHUTDOWN};
 	Transition *transitionSetup = new Transition{new TransitionActionClient(nodeName + "/transition_setup",true), STATE_SETUP};
@@ -85,6 +85,7 @@ StateMachine::StateMachine(std::string nodeName) :
 }
 
 StateMachine::~StateMachine() {
+	//TODO pointer values remove
 }
 
 void StateMachine::onChangeStateAction(const ChangeStateGoalConstPtr& goal){
@@ -103,7 +104,9 @@ void StateMachine::onChangeStateAction(const ChangeStateGoalConstPtr& goal){
 			b = false;
 		}
 
-	if(!b)
+	if(b)
+		changeStateActionServer.setSucceeded();
+	else
 		changeStateActionServer.setAborted(changeStateResult);
 }
 void StateMachine::onChangeModeAction(const ChangeModeGoalConstPtr& goal){
@@ -142,7 +145,7 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 	if (!statePossibleInMode(newState, currentMode) && newState > currentState )
 		return false;
 
-	transitionMapType::iterator it = transitionMap.find(statePair(currentState, newState));
+	transitionMapType::iterator it = transitionMap.find(StatePair(currentState, newState));
 	if (it == transitionMap.end()) {
 		return false;
 	}
@@ -152,9 +155,11 @@ bool StateMachine::changeState(rexos_statemachine::State newState) {
 	TransitionActionClient* transitionActionClient = changeStateEntry.transition->transitionActionClient;
 	TransitionGoal goal;
 	transitionActionClient->sendGoal(goal);
+	transitionActionClient->waitForResult();
+
 	if (transitionActionClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
 		//transition succeeded
-		_setState(changeStateEntry.previousNextState.second);
+		_setState(changeStateEntry.statePair.second);
 	}else if(currentState != changeStateEntry.abortTransition->transitionState){
 		//abort method
 		_setState(changeStateEntry.abortTransition->transitionState);
@@ -229,6 +234,7 @@ void StateMachine::setListener(Listener* listener) {
 }
 
 void StateMachine::_setState(State state) {
+	ROS_INFO("state changed to:%s",state_txt[state]);
 	currentState = state;
 	if (listener != NULL) {
 		listener->onStateChanged();

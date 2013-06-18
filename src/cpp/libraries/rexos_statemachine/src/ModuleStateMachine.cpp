@@ -28,6 +28,7 @@ ModuleStateMachine::ModuleStateMachine(std::string moduleName, int equipletId, i
 
 	changeStateNotificationClient = nodeHandle.serviceClient<equiplet_node::StateUpdate>(equipletNamespaceName + "/" + moduleNamespaceName + "/state_update");
 	changeModeNotificationClient = nodeHandle.serviceClient<equiplet_node::ModeUpdate>(equipletNamespaceName + "/" + moduleNamespaceName + "/mode_update");
+	setListener(this);
 }
 
 void ModuleStateMachine::onStateChanged() {
