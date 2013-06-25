@@ -11,6 +11,15 @@
 *.la
 *.a
 
+# Latex files
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.pdf
+*.log
+*.toc
+
 # ignore intelliJ Idea project files
 .idea/
 *.iml
