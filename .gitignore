@@ -11,7 +11,7 @@
 *.la
 *.a
 
-# Latex files
+# Latex generated files
 *.aux
 *.bbl
 *.blg
@@ -19,6 +19,8 @@
 *.pdf
 *.log
 *.toc
+*.lof
+*.synctex.gz
 
 # ignore intelliJ Idea project files
 .idea/
