@@ -49,9 +49,7 @@ You can reconfigure an equiplet by changing its modules.
 Because modules can be changed on the fly, the equiplet has to dynamically adapt to its new configuration.
 Due to the autonomous nature of equiplets they can receive instruction at any time.
 
-To ensure safe operation, modules may not start processing instructions when an operator is working on an equiplet. Therefore a secondary safety mechanism has to be developed.
-
-We have realized such a safety mechanism in form of a state machine in each equiplet and module alongside with a SCADA system.
+This together creates a lot of problems we have to solve.
 
 \chapter{Project team}
 The following people have worked on ESCiMO
@@ -67,6 +65,23 @@ J. Vergeer & Software developer SCADA, MOST
 \chapter{Assignment}
 
 \section{Problem description}
+
+\subsection{Safety}
+Equiplets are autonomous machines. 
+They are part of a large production platform where multiple entities can request actions form the equiplet.
+These requests can be received at any time.
+Even when an operator is working on an equiplet.
+When an operator is working on an equiplet, it has to be absolutely safe.
+Modules must be powered off and have to be guarantee that they will not power up while the operator is still nearby.
+To prevent this a safety mechanism has to be build.
+
+\subsection{Synchronisation}
+When instructions require actions from multiple modules both modules have to be ready.
+Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready.
+To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
+
+\subsection{SCADA}
+To operate an equiplet the operator has to be able to see what is going on with the equiplet and modules. He also want an interface where he can perform minimal interaction with the equiplet. Therefore also a SCADA system has to be developed.
 
 \section{Goals}
 
