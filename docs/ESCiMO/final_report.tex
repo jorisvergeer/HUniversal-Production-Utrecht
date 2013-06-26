@@ -1,7 +1,6 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-
 \renewcommand{\chaptername}{}
 
 \title{
@@ -36,10 +35,42 @@ In this report we look at the realisation of the state machines build into the s
 \chapter{Introduction}
 In the 6th semester of our course Computer Science at the University of Applied Science Utrecht we participated in the Ubiquitous Computing specialisation.
 
-\section{Ubiquitous computing}
-Ubiquitous computing is a specialisation about information processing in everyday objects.\cite{wiki_ubicomp}
-This years project is integrated with the "factories of the future" project.\cite{ubi_project_note}
-In factories of the future the university of applied science Utrecht tries to develop a production line using Grid Manufacturing and Reconfigurable Manufacturing Systems.
+\section{Agile/Grid manufacturing}
+To meet the requirements of modern production, where short
+time to market, requirement-driven production and low cost
+small quantity production are important issues, we have de-
+veloped a production hardware infrastructure as well as an
+agent-based software infrastructure for agile industrial pro-
+duction. This production is done on special devices called
+equiplets. A grid of these equiplets connected by a fast net-
+work is capable of producing a variety of different products
+in parallel. The multi-agent-based software infrastructure is
+responsible for the agile manufacturing.\cite{Paper70}
+
+\section{Equiplet}
+The Equiplet is a part of the Agile/Grid manufacturing. The Agent consist of multiple agents and controls one or more modules. Based on the connected modules of the equiplet, provide the equiplet services for an other agent in the Agile/Grid manufactoring environment. 
+
+\subsection{Equiplet Agent}
+The equiplet agent is the leading agent for the equiplet. It is responsible for negotiation with the product agent and managing the equiplet schedule.\cite{REXOS_Design}
+
+\subsection{Service Agent}
+The service agent is responsible for translating a product step into service step(s). The service agent also represents equiplet services based on the attached modules. The set of product steps which can be performed is based on the services it provides.\cite{REXOS_Design}
+
+\subsection{Hardware Agent}
+The hardware agent is responsible for the interaction with the ROS layer. It translates service steps into equiplet steps, which can be interpreted by the ROS layer. It has a specific piece of software for each hardware module that is currently attached to the equiplet. Each one of these pieces of software is responsible for its own hardware module on the equiplet, and handle the actual translation. Each service step has a specific module that will lead the translation. \cite{REXOS_Design}
+
+\subsection{ROS Equiplet}
+The ros equiplet is the responsible for the control of a set of modules which belong to by the equiplet. This equiplet part works with the the ROS system.
+
+\section{Module}
+An module is an part of the system which controls one or more devices. This part can be seen as the lowest layer of the hardware control.
+There are actor and no-actor modules. The actor modules are the modules which is an risk for an human if he is close to the module. The no-actors can be seen as the sensor modules which produce measured information.  
+
+\section{Blackboards}
+The Agile Manufacturing contain of three blackboard:Product steps,Service steps and Equiplet steps. These blackboard will be used to communicate between the equiplet agents or to communicate with the ROS node. All these blackboard steps contain a state, about the progress of the step:EVALUATING, PLANNED, WAITING, IN PROGRESS, SUSPENDED/WARNING, DONE, ABORTED and FAILED.
+
+\section{MAchine STate (MAST)}
+An machine state machine are be used to control the hardware.....
 
 \section{ESCiMO}
 
@@ -102,6 +133,25 @@ J. Vergeer & Software developer SCADA, MOST
 \section{Profile sketch}
 
 \chapter{Abbreviations and concepts}
+bron:[Project Transfer Document] Overview]
+\section{ROS}
+The Robot Operating System is an open source meta-operating system, designed to run on top of linux (Ubuntu): “It provides the services you would expect from an operating system, including hardware abstraction, low-level device control, implementation of commonly-used functionality, message-passing between processes, and package management. It also provides tools and libraries for obtaining, building, writing, and running code across multiple computers.”[32]
+\section{Agent}
+“The word ‘agent’ comes from the Latin word ‘agere’, meaning: ‘to act’. Software agents are autonomous entities[28] that have their own purpose and the ability to communicate with other agents. There are many definitions of a software agent, we prefer the definition of Wooldridge and Jennings[29] “An agent is an encapsulated computer system that is situated in some environment and that is capable of flexible, autonomous action in that environment in
+order to meet its design objectives”.”[27]
+\section{Mas}
+“A multi-agent system (MAS) is a system composed of multiple interacting intelligent agents within an environment. Multi-agent systems can be used to solve problems that are difficult or impossible for an individual agent or a monolithic system to solve. Intelligence may include some methodic, functional, procedural or algorithmic search, find and processing approach.”[30]
+\section{Grid}
+A grid is a controlled group of equiplets.
+\section{Equiplet}
+An Equiplet is a product, the hardware, the "generic" modular machine (the HUniplacer is a prototype "instance" of an Equiplet type machine). An equiplet consist of one or more hardware parts which he is able to perform tasks.
+\section{Module}
+An module control some hardware parts of the equiplet. It is an subset of hardware devices of the equiplet.
+\section{Device}
+An device is an hardware element which produce information(sensors) or is able to execute tasks(actors).
+\section{Blackboard}
+bron:[Technical Design] Blackboard system
+A blackboard is a structure for saving data and can be implemented as a database. It can also be used as a communication medium (e.g. a component submits a message to the blackboard and another component reads the submitted message) or as a knowledge sharing cent
 
 \chapter{Sources}
 
