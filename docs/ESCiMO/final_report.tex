@@ -112,6 +112,9 @@ When instructions require actions from multiple modules both modules have to be 
 Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready.
 To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
 
+\subsection{Error handling}
+Modules can break down during operation. When this happens the equiplet must abort its current instruction and stop receiving new instructions until the module is fixed.
+
 \subsection{SCADA}
 To operate an equiplet the operator has to be able to see what is going on with the equiplet and modules. He also want an interface where he can perform minimal interaction with the equiplet. Therefore also a SCADA system has to be developed.
 
