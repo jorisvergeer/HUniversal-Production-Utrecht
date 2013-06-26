@@ -1,5 +1,7 @@
 \documentclass[10pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
 \renewcommand{\chaptername}{}
 
 \title{
@@ -8,26 +10,38 @@ in \LaTeX{}
 }
 
 \author{
-Joris Vergeer\\
-Gerben Boot
+Joris Vergeer - 1585591\\
+Gerben Boot - 1575754\\
+\\
+\\
+Daniel Telgren
 }
+
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This is abstact
+%%
+%%TODO Rewrite parts of this
+%%
+Grid Manufacturing (GM) is a new production paradigm, based upon the use of standardized and modular Reconfigurable Manufacturing Systems (RMS).\cite{SICE13}
+A production unit in a RMS is called an equiplet.
+Each equiplet contains interchangeable modules. 
+These hardware modules have software counterparts.
+In this report we look at the realisation of the state machines build into the software counterparts of modules and equiplets as well as the realisation of a SCADA for the equiplet with its modules.
 \end{abstract}
 
 \tableofcontents
 
 \chapter{Introduction}
 
+\chapter{Project team}
+
 \chapter{Assignment}
-\section{Problem}
 
-\section{Assignment}
+\section{Problem description}
 
-\section{Product description}
+\section{Goals}
 
 \section{Requirements and conditions}
 
@@ -37,8 +51,6 @@ This is abstact
 \section{Overview}
 
 \section{Analysis}
-
-\section{Method}
 
 \chapter{Design}
 
@@ -63,7 +75,7 @@ This is abstact
 
 \section{Calculation hours and costs}
 
-\section{project evaluation}
+\section{Project evaluation}
 
 \chapter{Reflection}
 \section{Reflection technical competences}
@@ -78,4 +90,6 @@ This is abstact
 
 \chapter{Attachments}
 
+\bibliographystyle{plain}
+\bibliography{references}
 \end{document}
