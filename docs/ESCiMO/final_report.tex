@@ -39,9 +39,19 @@ In the 6th semester of our course Computer Science at the University of Applied 
 \section{Ubiquitous computing}
 Ubiquitous computing is a specialisation about information processing in everyday objects.\cite{wiki_ubicomp}
 This years project is integrated with the "factories of the future" project.\cite{ubi_project_note}
-In factories of the future the university of applied science Utrecht tries to develop a production line using Grid Manufacturing and Reconfigurable Manufacturing Systems.
+In factories of the future the university of applied science Utrecht tries to develop an autonomous production line using Grid Manufacturing and Reconfigurable Manufacturing Systems (RMS).
 
-\section{ESCiMO}
+\section{Equiplet, SCada, MOdules (ESCiMO)}
+In our ubiquitous computing project we are developing a system to control a production unit in an RMS called equiplet. 
+
+Equiplets contain interchangeable modules. 
+You can reconfigure an equiplet by changing its modules.
+Because modules can be changed on the fly, the equiplet has to dynamically adapt to its new configuration.
+Due to the autonomous nature of equiplets they can receive instruction at any time.
+
+To ensure safe operation, modules may not start processing instructions when an operator is working on an equiplet. Therefore a secondary safety mechanism has to be developed.
+
+We have realized such a safety mechanism in form of a state machine in each equiplet and module alongside with a SCADA system.
 
 \chapter{Project team}
 The following people have worked on ESCiMO
