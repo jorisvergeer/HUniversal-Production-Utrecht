@@ -188,6 +188,9 @@ In any case, the equiplet must react when a module in error.
 \subsubsection{Step control}
 Some equiplet has a (mostly)yellow button. This button should be needed to execute equiplet steps by once and execute next by a press on the button.
 
+\subsection{Error handling}
+Modules can break down during operation. When this happens the equiplet must abort its current instruction and stop receiving new instructions until the module is fixed.
+
 \subsection{SCADA}
 To operate an equiplet the operator has to be able to see what is going on with the equiplet and modules. He also want an interface where he can perform minimal interaction with the equiplet. Therefore also a SCADA system has to be developed.
 
@@ -196,6 +199,33 @@ To operate an equiplet the operator has to be able to see what is going on with 
 \section{Requirements and conditions}
 
 \section{Final products}
+\subsection{State Machine}
+Our first product is a state machine for modules and equiplets.
+The state machine is our solution for the error handling, safety guarantee and synchronisation.
+The state machine defines 3 states in which a module or equiplet can be.
+Between states are transitions in which actions can be performed to get into the next state.
+
+In addition to states, there are also modes.
+A mode defines which states and transitions are allowed.
+
+\subsubsection{MOST}
+A variant of the state machine is MOST.
+MOST is the state machine in the modules.
+This state machine has additional functionality.
+This state machine is responsible for registering itself to the equiplet state machine.
+
+\subsubsection{EST}
+The EST variant of the state machine is implemented in the equiplet.
+It has additional functionality for managing registered MOST state machines.
+
+\subsection{SCADA}
+The SCADA gives operators insight into the equiplet.
+It shows the current state and modes of the equiplet and its modules.
+It also gives the operator some control over the equiplet.
+In the SCADA he can change the mode and state of the equiplet and its modules.
+
+\subsection{Implementation}
+Finally we will implement the state machines in existing modules and equiplets.
 
 \chapter{Analysis}
 \section{Overview}
@@ -259,6 +289,6 @@ A blackboard is a structure for saving data and can be implemented as a database
 
 \chapter{Attachments}
 
-\bibliographystyle{abbrv}
+\bibliographystyle{plain}
 \bibliography{references}
 \end{document}
