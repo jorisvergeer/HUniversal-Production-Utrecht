@@ -1,6 +1,7 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{wrapfig}
 
 \renewcommand{\chaptername}{}
 
@@ -70,8 +71,50 @@ There are actor and no-actor modules. The actor modules are the modules which is
 \section{Blackboards}
 The Agile Manufacturing contain of three blackboard:Product steps,Service steps and Equiplet steps. These blackboard will be used to communicate between the equiplet agents or to communicate with the ROS node. All these blackboard steps contain a state, about the progress of the step:EVALUATING, PLANNED, WAITING, IN PROGRESS, SUSPENDED/WARNING, DONE, ABORTED and FAILED.
 
-\section{MAchine STate (MAST)}
-An machine state machine are be used to control the hardware.....
+\section{State Machine and states}
+A finite-state machine (FSM) or finite-state automaton (plural: automata), or simply a state machine, is a mathematical model of computation used to design both computer programs and sequential logic circuits. It is conceived as an abstract machine that can be in one of a finite number of states. The machine is in only one state at a time; the state it is in at any given time is called the current state. It can change from one state to another when initiated by a triggering event or condition; this is called a transition. A particular FSM is defined by a list of its states, and the triggering condition for each transition.\cite{state_machine}
+
+\subsection{MAST}
+\begin{wrapfigure}{r}{0.35\textwidth}
+	\begin{center}
+		\includegraphics[scale=0.5]{mast.png}
+	\caption{MAST}
+	\end{center}
+	\vspace{-100pt}
+\end{wrapfigure}
+
+MAST is a State Machine which is developed for the Agile/Grid Manufacturing project. MAST is designed for the modules to control its devices. Mast implemented three states and four transition states.
+
+\subsubsection{States}
+The state machine will have three states:
+\begin{itemize}
+\item \textbf{Safe} This will mean safe for an human and no power on the machine.
+\item \textbf{Standby} This will mean the module will be ready to run, but isn’t running.
+\item \textbf{Normal} This will mean the module is in progress.
+\end{itemize}
+
+\subsubsection{Transition states}
+Between the states there are transition states, which is the only way to change from state. Transition states are responsible to set the machine correct to the next state according the state requirements.  
+There are four transition states.
+\paragraph{Setup to change from safe to standby}
+Set up the module such as calibrating etc.
+\paragraph{Shutdown to change from standby to safe}
+Shutdown the module
+\paragraph{Start to change from standby to normal}The module is receive run information
+\paragraph{Stop to change from normal to standby}The module is stopping operations.
+
+\paragraph{Abort}
+It will be possible that in a transition state the transition will be undo. This is possible by a ‘abort’. When the machine in a transition state and the transition must be aborted, the transition must stop its commands and change from state to its contrary state. 
+The next aborts are possible: from 'setup to shutdown' and from 'start to stop'. 
+
+\subsubsection{Actors and nonactors}
+A distinction is made between modules that contain parts that are potentially dangerous and modules that do not contain these parts. These parts are, amongst others, all moving parts,parts that heat up, parts that eject matter and parts that emit electromagnetic radiation. Modules that contain any of these parts are known as actors. Their counterparts (modules that are not potentially dangerous) are nonactors.\cite{mast_funcional_design}
+
+\subsection{The equiplet states}
+Due to the nature of the (autonomous) modules in the reconfigurable system the modules can have states that differ from one another. The equiplet node is the central point in which all modules are known. The equiplet itself has two states, one to monitor safety and one to monitor operation. Each state depends on the states of the modules attached to the equiplet in its own
+way.
+\textbf{The safety state} indicates the level of safety and is equal to the highest actor module state.
+\textbf{The operation state} indicates whether the equiplet is able to fulfill the current task and is equal to the lowest state of the required modules. The required modules are the modules necessary tofulfill the current task as known by the hardware agent.\cite{mast_funcional_design}
 
 \section{Equiplet, SCada, MOdules (ESCiMO)}
 In our ubiquitous computing project we are developing a system to control a production unit in an RMS called equiplet. 
