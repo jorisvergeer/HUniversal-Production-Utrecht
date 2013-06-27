@@ -71,8 +71,24 @@ There are actor and no-actor modules. The actor modules are the modules which is
 \section{Blackboards}
 The Agile Manufacturing contain of three blackboard:Product steps,Service steps and Equiplet steps. These blackboard will be used to communicate between the equiplet agents or to communicate with the ROS node. All these blackboard steps contain a state, about the progress of the step:EVALUATING, PLANNED, WAITING, IN PROGRESS, SUSPENDED/WARNING, DONE, ABORTED and FAILED.
 
-\section{State Machine and states}
+\section{State Machine}
 A finite-state machine (FSM) or finite-state automaton (plural: automata), or simply a state machine, is a mathematical model of computation used to design both computer programs and sequential logic circuits. It is conceived as an abstract machine that can be in one of a finite number of states. The machine is in only one state at a time; the state it is in at any given time is called the current state. It can change from one state to another when initiated by a triggering event or condition; this is called a transition. A particular FSM is defined by a list of its states, and the triggering condition for each transition.\cite{state_machine}
+
+\subsection{Why must we used it}
+
+\subsubsection{Safety}
+Equiplets are autonomous machines. 
+They are part of a large production platform where multiple entities can request actions form the equiplet.
+These requests can be received at any time.
+Even when an operator is working on an equiplet.
+When an operator is working on an equiplet, it has to be absolutely safe.
+Modules must be powered off and have to be guarantee that they will not power up while the operator is still nearby.
+To prevent this a safety mechanism has to be build.
+
+\subsubsection{Synchronisation}
+When instructions require actions from multiple modules both modules have to be ready.
+Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready.
+To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
 
 \subsection{MAST}
 \begin{wrapfigure}{r}{0.35\textwidth}
@@ -141,19 +157,36 @@ J. Vergeer & Software developer SCADA, MOST
 
 \section{Problem description}
 
-\subsection{Safety}
-Equiplets are autonomous machines. 
-They are part of a large production platform where multiple entities can request actions form the equiplet.
-These requests can be received at any time.
-Even when an operator is working on an equiplet.
-When an operator is working on an equiplet, it has to be absolutely safe.
-Modules must be powered off and have to be guarantee that they will not power up while the operator is still nearby.
-To prevent this a safety mechanism has to be build.
+\subsection{State Machine}
+The current State Machine MAST which the Modules implemented miss some required functionality. These missing have been described here.
 
-\subsection{Synchronisation}
-When instructions require actions from multiple modules both modules have to be ready.
-Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready.
-To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
+\subsubsection{Emergency button}
+A module has always an emergency button to guarantees safety. When the emergency button is pressed, the software must react on it.
+
+\subsubsection{Errors}
+It is possible that an hardware element detect an error. When a module has an error it should receive not be more tasks from the equiplet to execute. Also its current tasks can not finish.
+
+\subsubsection{(Re-)configuration}
+The current state-machine hasn't options to switch to an position to (re-)configurate or to switch to a mode of repair. An repair would see more technical information about the hardware executions and want to reconfigure.
+
+\subsubsection{Lock}
+A human would the option to lock on a state of the state machine such as to lock on safe or standby. Lock will means that it isn't possible to call transitions. When the human lock on safe, it guarantees that the state machine hold the safe position.
+
+\subsection{Equiplet control}
+The equiplet controls one or more modules. All modules implement a State Machine, but the equiplet must react on changes of the State Machine of the modules.
+
+\subsubsection{Error Handling}
+When a module in error, the equiplet should to stop executing its current equiplet step and set it on an aborted state. This option is possible, because all blackboard steps contains states. 
+
+Also when a module in error there are two options:
+\begin{enumerate}
+\item Stop executing equiplet steps
+\item Stop executing equiplet steps which needed the module which in error.
+\end{enumerate}
+In any case, the equiplet must react when a module in error.
+
+\subsubsection{Step control}
+Some equiplet has a (mostly)yellow button. This button should be needed to execute equiplet steps by once and execute next by a press on the button.
 
 \subsection{SCADA}
 To operate an equiplet the operator has to be able to see what is going on with the equiplet and modules. He also want an interface where he can perform minimal interaction with the equiplet. Therefore also a SCADA system has to be developed.
