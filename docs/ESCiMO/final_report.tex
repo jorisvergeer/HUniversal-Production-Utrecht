@@ -2,6 +2,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{tikz} 
+\usepackage{float} 
+\usepackage{pgf-umlcd} 
+\usepackage{pgf-umlsd} 
+\usepackage{listings}
 
 \renewcommand{\chaptername}{}
 
@@ -353,6 +358,120 @@ After a number of redesigns we got a design that was approved.
 
 \chapter{Final product}
 \section{Result}
+\subsection{MOST}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \begin{tikzpicture}
+        \begin{interface}[text width=8cm]{ModuleStateMachine}{0,0}
+        \operation{ModuleStateMachine(string moduleName, int equipletID, int moduleID, bool isActor)}
+        \operation[0]{transitionSetup(ActionSever* as) :     void}
+        \operation[0]{transitionShutdown(ActionSever* as) : void}
+        \operation[0]{transitionStart(ActionSever* as) : void}
+        \operation[0]{transitionStp(ActionSever* as) : void}
+        \end{interface}
+    \end{tikzpicture}
+\end{wrapfigure}
+
+MOST is a state machine for modules.
+It is available as interface.
+Each module has to implement it. 
+
+The constructor of the ModuleStateMachine asks four parameters. \\
+\\
+\textbf{\textit{moduleName}} is the name of the module \\
+\textbf{\textit{equipletID}} is the id of the eqiplet the module is attached to \\
+\textbf{\textit{moduleID}} is the id of the module itself \\
+\textbf{\textit{isActor}} is a boolean indicating of the module is an actor or not. \\
+
+\noindent
+The MOST implementation consists of four methods.
+Each method represents a transition.
+At the end of a transition the module has to call setSucceeded or setFailed on the given ActionServer.
+
+\begin{figure}[H]
+\begin{lstlisting}[language=c++, frame=single, caption=Sample transition]
+void ModuleImplementation::transitionSetup(
+	rexos_statemachine::TransitionActionServer* as) 
+{
+	ROS_INFO("Setup transition called");
+
+	//Do groundbreaking initialisation sequence
+
+	as->setSucceeded();
+}
+\end{lstlisting}
+\end{figure}
+
+\noindent
+The state machine also takes care of registering itself at the equiplet. 
+When a module starts it waits for an equiplet with the ID given in the state machines constructor. 
+Then it will send a module registration request. 
+The equiplet will then respond with a success or failure. 
+If the registration has failed, the module will shut itself down.
+
+\begin{center}
+\begin{sequencediagram}
+    \newinst{module}{:Module}
+    \newinst{equiplet}{:Equiplet}
+    \begin{call}{module}{ModuleRegistration(moduleName, moduleID)}{equiplet}{succeed}
+    \end{call}
+\end{sequencediagram}
+\end{center}
+
+\noindent
+After registration EST has control over the states and modes of the module.
+
+\subsection{EST}
+EST is the state machine in the equiplet. 
+This state machine has predefined functionality and is implemented for the greatest important parts.
+
+EST controls the state and mode of the equiplet.
+It also manages the state and modes of its attached modules.
+EST provides the module registration functionality.
+
+\subsection{State machine}
+Both EST and MOST are based on the same base state machine. 
+
+The base state machine provides a shared interface for controlling the state machine.
+The interface consists of two ROS Actionlib actions for changing the desired state and mode.
+
+\subsubsection{Modes}
+The base state machine also defines some modes. Each essentially allows or disallows certain states and transitions.
+
+When a change mode action is received and the current state is not allowed in the new mode, the state machine will force the module or equiplet to go to a allowed state.
+
+\begin{figure}[H]
+\caption{
+    Example forced state change.
+    Module is in normal state.
+}
+\begin{center}
+\begin{sequencediagram}
+    \newinst[0]{e}{:Equiplet}
+    \newinst[5]{s}{:Statemachine}
+    \newinst[1]{m}{:Module}
+    \begin{messcall}{e}{changeMode(CRITICAL\_ERROR)}{s}
+    \end{messcall}
+    \begin{messcall}{s}{modeChanged(CRITICAL\_ERROR)}{e}
+    \end{messcall}
+    \begin{call}{s}{transitionStop}{m}{SUCCESS}
+    \end{call}
+    \begin{messcall}{s}{stateChanged(STANDBY)}{e}
+    \end{messcall}
+\end{sequencediagram}
+\end{center}
+\end{figure}
+
+\subsection{SCADA}
+SCADA runs in the same program that is running EST. 
+EST provides SCADA with the information it needs. 
+SCADA in turn uses EST to send commands to the registered modules.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.4]{scada.png}
+\end{center}
+\end{figure}
 
 \newpage
 \section{Evaluation}
