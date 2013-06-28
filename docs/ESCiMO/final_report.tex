@@ -31,10 +31,10 @@ Daniel Telgren
 %%TODO Rewrite parts of this
 %%
 Grid Manufacturing (GM) is a new production paradigm, based upon the use of standardized and modular Reconfigurable Manufacturing Systems (RMS).\cite{SICE13}
-A production unit in a RMS is called an equiplet.
-Each equiplet contains interchangeable modules. 
+A production unit in a RMS is called an Equiplet.
+Each Equiplet contains interchangeable modules. 
 These hardware modules have software counterparts.
-In this report we look at the realisation of the state machines build into the software counterparts of modules and equiplets as well as the realisation of a SCADA for the equiplet with its modules.
+In this report we look at the realisation of the State Machines build into the software counterparts of modules and Equiplets as well as the realisation of a SCADA for the Equiplet with its modules.
 \end{abstract}
 
 \tableofcontents
@@ -44,47 +44,37 @@ In this report we look at the realisation of the state machines build into the s
 In the 6th semester of our course Computer Science at the University of Applied Science Utrecht we participated in the Ubiquitous Computing specialisation.
 
 \subsubsection{Agile/Grid manufacturing}
-To meet the requirements of modern production, where short
-time to market, requirement-driven production and low cost
-small quantity production are important issues, we have de-
-veloped a production hardware infrastructure as well as an
-agent-based software infrastructure for agile industrial pro-
-duction. This production is done on special devices called
-equiplets. A grid of these equiplets connected by a fast net-
-work is capable of producing a variety of different products
-in parallel. The multi-agent-based software infrastructure is
-responsible for the agile manufacturing.\cite{Paper70}
+To meet the requirements of modern production, where short time to market, requirement-driven production and low cost small quantity production are important issues, we have de-veloped a production hardware infrastructure as well as an
+agent-based software infrastructure for agile industrial pro-duction. This production is done on special devices called Equiplets. A grid of these Equiplets connected by a fast net-work is capable of producing a variety of different products
+in parallel. The multi-agent-based software infrastructure is responsible for the agile manufacturing.\cite{Paper70}
 
 \subsubsection{Equiplet}
-The Equiplet is a part of the Agile/Grid manufacturing. The Agent consist of multiple agents and controls one or more modules. Based on the connected modules of the equiplet, provide the equiplet services for an other agent in the Agile/Grid manufactoring environment. 
+The Equiplet is a part of the Agile/Grid manufacturing. An Equiplet consist of Serveral Agents and a ROS node. Based on the connected modules of the Equiplet, provide the Equiplet services for an other agent in the Agile/Grid manufactoring environment. 
 \paragraph{Agent}
-The equiplet agent is the leading agent for the equiplet. It is responsible for negotiation with the product agent and managing the equiplet schedule.\cite{REXOS_Design}
+The Equiplet agent is the leading agent for the Equiplet. It is responsible for negotiation with the product agent and managing the Equiplet schedule.\cite{REXOS_Design}
 \paragraph{Service Agent}
-The service agent is responsible for translating a product step into service step(s). The service agent also represents equiplet services based on the attached modules. The set of product steps which can be performed is based on the services it provides.\cite{REXOS_Design}
+The service agent is responsible for translating a product step into service step(s). The service agent also represents Equiplet services based on the attached modules. The set of product steps which can be performed is based on the services it provides.\cite{REXOS_Design}
 \paragraph{Hardware Agent}
-The hardware agent is responsible for the interaction with the ROS layer. It translates service steps into equiplet steps, which can be interpreted by the ROS layer. It has a specific piece of software for each hardware module that is currently attached to the equiplet. Each one of these pieces of software is responsible for its own hardware module on the equiplet, and handle the actual translation. Each service step has a specific module that will lead the translation. \cite{REXOS_Design}
+The hardware agent is responsible for the interaction with the ROS layer. It translates service steps into Equiplet steps, which can be interpreted by the ROS layer. It has a specific piece of software for each hardware module that is currently attached to the Equiplet. Each one of these pieces of software is responsible for its own hardware module on the Equiplet, and handle the actual translation. Each service step has a specific module that will lead the translation. \cite{REXOS_Design}
 \paragraph{ROS Equiplet}
-The ros equiplet is the responsible for the control of a set of modules which belong to by the equiplet. This equiplet part works with the the ROS system.
+The ros Equiplet is the responsible for the control of a set of modules which belong to by the Equiplet. This Equiplet part works with the the ROS system.
 
 \subsubsection{Module}
 An module is an part of the system which controls one or more devices. This part can be seen as the lowest layer of the hardware control. A distinction is made between modules that contain parts that are potentially dangerous and modules that do not contain these parts. These parts are, amongst others, all moving parts,parts that heat up, parts that eject matter and parts that emit electromagnetic radiation. Modules that contain any of these parts are known as actors. Their counterparts (modules that are not potentially dangerous) are nonactors.\cite{mast_funcional_design}
 
 \subsubsection{Blackboards}
-The Agile Manufacturing contain of three blackboard:Product steps,Service steps and Equiplet steps. These blackboard will be used to communicate between the equiplet agents or to communicate with the ROS node. All these blackboard steps contain a state, about the progress of the step:EVALUATING, PLANNED, WAITING, IN PROGRESS, SUSPENDED/WARNING, DONE, ABORTED and FAILED.
+The Agile Manufacturing contain of three blackboard:Product steps,Service steps and Equiplet steps. These blackboard will be used to communicate between the Equiplet agents or to communicate with the ROS node. All these blackboard steps contain a state, about the progress of the step:EVALUATING, PLANNED, WAITING, IN PROGRESS, SUSPENDED/WARNING, DONE, ABORTED and FAILED.
 
 \subsubsection{State Machine}
-A finite-state machine (FSM) or finite-state automaton (plural: automata), or simply a state machine, is a mathematical model of computation used to design both computer programs and sequential logic circuits. It is conceived as an abstract machine that can be in one of a finite number of states. The machine is in only one state at a time; the state it is in at any given time is called the current state. It can change from one state to another when initiated by a triggering event or condition; this is called a transition. A particular FSM is defined by a list of its states, and the triggering condition for each transition.\cite{state_machine}
+A finite-State Machine (FSM) or finite-state automaton (plural: automata), or simply a State Machine, is a mathematical model of computation used to design both computer programs and sequential logic circuits. It is conceived as an abstract machine that can be in one of a finite number of states. The machine is in only one state at a time; the state it is in at any given time is called the current state. It can change from one state to another when initiated by a triggering event or condition; this is called a transition. A particular FSM is defined by a list of its states, and the triggering condition for each transition.\cite{state_machine}
 
 \subsubsection{Equiplet, SCada, MOdules (ESCiMO)}
-In our ubiquitous computing project we are developing a system to control a production unit in an RMS called equiplet. 
-
+In our ubiquitous computing project we are developing a system to control a production unit in an RMS called Equiplet.\\ 
 Equiplets contain interchangeable modules. 
-You can reconfigure an equiplet by changing its modules.
-Because modules can be changed on the fly, the equiplet has to dynamically adapt to its new configuration.
-Due to the autonomous nature of equiplets they can receive instruction at any time.
-
+You can reconfigure an Equiplet by changing its modules.
+Because modules can be changed on the fly, the Equiplet has to dynamically adapt to its new configuration.
+Due to the autonomous nature of Equiplets they can receive instruction at any time.\\
 This together creates a lot of problems we have to solve.
-
 
 \chapter{Project team}
 The following people have worked on ESCiMO
@@ -102,84 +92,92 @@ J. Vergeer & Software developer SCADA, MOST
 \section{Problem description}
 \subsection{Safety}
 Equiplets are autonomous machines. 
-They are part of a large production platform where multiple entities can request actions form the equiplet.
-These requests can be received at any time.
-Even when an operator is working on an equiplet.
-When an operator is working on an equiplet, it has to be absolutely safe.
+They are part of a large production platform where multiple entities can request actions form the Equiplet. These requests can be received at any time. Even when an operator is working on an Equiplet. When an operator is working on an Equiplet, it has to be absolutely safe.
 Modules must be powered off and have to be guarantee that they will not power up while the operator is still nearby.
 To prevent this a safety mechanism has to be build.
 \subsection{Synchronisation}
 When instructions require actions from multiple modules both modules have to be ready.
-Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready.
+Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready. 
 To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
 \subsection{Error handling}
-Modules can break down during operation. When this happens the equiplet must abort its current instruction and stop receiving new instructions until the module is fixed.
+Modules can break down during operation. When this happens the hardware must abort its current instruction and stop receiving new instructions until the module is fixed.
 \subsection{Human interaction}
-Some times a human want to have control to the equiplet. There are different options for humans to influenced the system such as an emergency button or by an step button to execute tasks by press on a button.
+Some times a human want to have control of the hardware. There are different options for humans to influenced the system such as an emergency button or by an step button to execute tasks by press on a button.
 
 \subsection{SCADA}
-To operate an equiplet the operator has to be able to see what is going on with the equiplet and modules. He also want an interface where he can perform minimal interaction with the equiplet. Therefore also a SCADA system has to be developed.
+To operate an Equiplet the operator has to be able to see what is going on with the Equiplet and modules. He also want an interface where he can perform minimal interaction with the Equiplet. Therefore also a SCADA system has to be developed.
 
 \section{Goals}
 \begin{itemize}
-\item Research current State Machine
+\item Research current State Machine of the Agile/Grid Manufacturing project
 \item Improve current State Machine with missing elements
 \item Implements designed State Machine in Agile/Grid manufacturing project 
-\item Design and implement SCADA of the equiplet
+\item Design and implement SCADA of the Equiplet
 \end{itemize}
 
 \newpage
 \section{Requirements and conditions}
 
-\subsection{State Machine}
-\subsubsection{Modes as additional of the State Machine}
-Mode is an additional of the State Machine to implement the missing elements.
-Currently the State Machine contains of states and transitions. A mode is a new dimension at the State Machine. In this case the State Machine react depended on its state and also on its mode.
+\subsection{Module State Machine}
+The State Machine contains of states and modes. Between the states are transitions. A module runs in depended of its state and its mode.
+
+\subsubsection{States}
+\paragraph{Safe}A module must indicate when it is safe, i.e. no power on it.
+\paragraph{Standby}A module must indicate when it is standby, i.e. read to run directly a task. Calibration etc. should be done.
+\paragraph{Normal}A module must indicate when it is running by a state called as 'Normal'. Running means it is executing a task.
+
+\subsubsection{Transitions}
+The module are only allowed to change its state by transitions. A transition is a state between two other states. In the transition state the functionality can be executed before reaching the next state.
+\paragraph{Setup}Setup set the State Machine from safe to standby.
+\paragraph{Shutdown}Shutdown set the State Machine from standby to safe.
+\paragraph{Start}Start set the State Machine from standby to normal.
+\paragraph{Stop}Stop set the State Machine from normal to standby.
+
+\subsubsection{Modes}
 \paragraph{Emergency Stop}In this mode the modules has lost the devices control and it is possible to show the State Machine as safe.
-\paragraph{Error}The error is intended for non-actor modules which in error. The State Machine may not allowed to startup. When a module in error and the State Machine in Normal, the module must try to finish it task and go to standby by stop.
+\paragraph{Error}The error is intended for non-actor modules which in error. The State Machine may not allowed to setup. When a module in error and the State Machine in Normal, the module must try to finish it task and go to standby by stop.
 \paragraph{Critical Error}The Critical error mode is intended for actor modules which in error. When an actor module in error, the module should stop when in normal and shutdown when in standby.
 \paragraph{Service}The Service mode will be used to add configuration calls to the module. In this mode the repairer should be used this calls.
 
-\subsection{Equiplet additions}
+\subsection{Equiplet}
 \subsubsection{Module control}
 \paragraph{Emergency Stop}
-When the emergency button is pressed, the equiplet can't execute equiplet steps, because the hardware of the modules are offline.
+When the emergency button is pressed, the Equiplet can't execute Equiplet steps, because the hardware of the modules are offline.
 \paragraph{Module in Error}
-When a module in error (this means a non-actor module) the other modules must try to finish its task if running. It is possible to run new tasks without the module which in error, but this is not usual said by Erik Puik. He prefer that an equiplet only runs tasks which use all its modules, so the equiplet will always full use its components(modules) and is attractive to the market. In this case we can say when an module in error, the equiplet is also in error.
+When a module in error (this means a non-actor module) the other modules must try to finish its task if running. It is possible to run new tasks without the module which in error, but this is not usual said by Erik Puik. He prefer that an Equiplet only runs tasks which use all its modules, so the Equiplet will always full use its components(modules) and is attractive to the market. In this case we can say when an module in error, the Equiplet is also in error.
 \paragraph{Module in Critical Error}
-When a module in critical error (this means a actor module) the other modules must abort its task and stop/shutdown. In this case an actor module constitutes a risk so the modules of the equiplet must shutdown to safe.
+When a module in critical error (this means a actor module) the other modules must abort its task and stop/shutdown. In this case an actor module constitutes a risk so the modules of the Equiplet must shutdown to safe.
+\paragraph{Lock}The Equiplet should lock its modules in safe or standby, i.e. its not allowed for the module State Machine to change from state.
 
-\subsubsection{Equiplet opportunities}
-\paragraph{Step control}
-The equiplet should execute exeplet steps by once named as 'Step control'.
-
-\subsubsection{Equiplet reaction on module State Machine changes}
-When the modules of the equiplet are not ready, it isn't possible to execute equiplet steps. In this case the equiplet must change the states of the equiplet steps. It is out of the scope to change this states, but the equiplet must know all module states to react on it.
+\subsubsection{Opportunities}
+\paragraph{Step control}The Equiplet should execute exeplet steps by once named as 'Step control'.
+\paragraph{Service}The Equiplet should be set in Service, so an repairer are allowed to (re)configure or to get hardware parameters of the modules.
+\paragraph{Module control from Agent} Equiplet agents should be able to monitor the module State Machines. Also the Equiplet Agent should be able to change the State Machine parameters of the modules.
 
 \newpage
 \section{Final products}
 \subsection{State Machine}
-Our first product is a state machine for modules and equiplets. 
+Our first product is a State Machine for modules and Equiplets. 
 
 In addition to states, there are also modes.
 A mode defines which states and transitions are allowed.
 
 \subsubsection{MOdule STatemachine (MOST)}
-The module state machine is an expansion of MAST with modes.
-The state machine is our solution for the error handling, safety guarantee and synchronisation.
+The module State Machine is an expansion of MAST with modes.
+The State Machine is our solution for the error handling, safety guarantee and synchronisation.
 
 \subsubsection{Equiplet STatemachine (EST)}
-The EST variant of the state machine is implemented in the equiplet.
-It has additional functionality for managing registered MOST state machines and also include modes.
+The EST variant of the State Machine is implemented in the Equiplet.
+It has additional functionality for managing registered MOST State Machines and also include modes.
 
 \subsection{SCADA}
-The SCADA gives operators insight into the equiplet.
-It shows the current state and modes of the equiplet and its modules.
-It also gives the operator some control over the equiplet.
-In the SCADA he can change the mode and state of the equiplet and its modules.
+The SCADA gives operators insight into the Equiplet.
+It shows the current state and modes of the Equiplet and its modules.
+It also gives the operator some control over the Equiplet.
+In the SCADA he can change the mode and state of the Equiplet and its modules.
 
 \subsection{Implementation}
-Finally we will implement the state machines in existing modules and equiplets.
+Finally we will implement the State Machines in existing modules and Equiplets.
 
 \subsection{Documentation}
 \paragraph{Project Transfer Document}We also make a Project Transfer Document with the parts of our design and describe what is done and what remains to be done.
@@ -193,17 +191,17 @@ Finally we will implement the state machines in existing modules and equiplets.
 	\vspace{-100pt}
 	\end{center}
 \end{wrapfigure}
-For the Agile/Manufacturing is a State Machine designed. This State Machine consist of states and transitions. Transitions which set the State Machine to an higher state, has also an abort state to return. The State Machine is intended to control the hardware.
+For the Agile/Grid Manufacturing project is a State Machine designed. This State Machine consist of states and transitions. Transitions which set the State Machine to an higher state, has also an abort state to return. The State Machine is intended to control the hardware.
 \subsection{States}
-The state machine will have three states:
+The State Machine will have three states:
 \begin{itemize}
 \item \textbf{Safe} I.e. safe for an human.
 \item \textbf{Standby} I.e. the machine will be ready to run, but isn’t running.
 \item \textbf{Normal} I.e. the machine is in progress.
 \end{itemize}
 \newpage
-\subsection{Transition states}
-Between the states there are transition states, which is the only way to change from state. Transition states are responsible to set the machine correct to the next state according the state requirements.  
+\subsection{Transitions}
+Between the states there are transition. Transitions can be regarded as state, 'transition states' called. The transition is called as state, because most transition needed time to execute. In this time, the state State Machine should have a state, so the transition state is used as its state. Transitions are the only way to change from a state. Transition states are responsible to set the machine correct to the next state according the state requirements.  
 There are four transition states:
 \begin{itemize}
 \item \textbf{Setup} to change from safe to standby
@@ -213,7 +211,7 @@ There are four transition states:
 \end{itemize}
 
 \subsection{Abort Transition}
-It will be possible that in a transition state the transition will be undo. This is possible by an abort transition. When the machine in a transition state and the transition must be aborted, the transition must stop its commands and change from state to its contrary state. 
+It is possible that in a transition state the transition will be undo. This option is the abort transition. When the machine in a transition state and the transition must be aborted, the transition must stop its commands and change from state to its contrary state. 
 The next aborts transitions are possible:
 \begin{itemize}
 \item Setup to Shutdown
@@ -221,60 +219,57 @@ The next aborts transitions are possible:
 \end{itemize}
 
 \subsection{Implementation}
-The StateMachine class has a transitionMap that is used to find the transition function that belongs to the transitions state. This way, a transition function can only be called when it’s in the map. So a direct transition from safe to standby without going through setup is impossible. The state machine class contains all the logic for receiving state change request and sending the state update messages to the EquipletNode. The module classes only need to implement the the transition functions. Those are module specific so the state machine can’t define those. So it’s the programmer’s responsibility to implement the transitions properly.
-\\\\
-This is a basic implementation of the state machine in REXOS. In the current version of the software, when an error occurs the node will crash rather than transition to a lower state so that the system can recover.\cite{mast_technical_design}
+The StateMachine class has a transitionMap that is used to find the transition function that belongs to the transitions state. This way, a transition function can only be called when it’s in the map. So a transition from safe to standby without going through setup is impossible. The State Machine class contains all the logic for receiving state change request and sending the state update messages to the EquipletNode. The module classes only need to implement the the transition functions. Those are module specific so the State Machine can’t define those. So it’s the programmer’s responsibility to implement the transitions properly.\cite{mast_technical_design}
 
 \newpage
 \section{MOdule STateMachine (MOST)}
-The State Machine is implemented by modules. This implemented StateMachine is called MOST.
+The State Machine is implemented by modules. This implemented State Machine is called MOST.
 
 \subsection{Transition states}
 The transition states set the module to the next state. Each Transition must be implemented in the module, because different modules has different transition implementation.
 
 \paragraph{Setup}This transition could be used for: calibration, preheat etc.
 \paragraph{Shutdown}This transition could be used for: less power of motors, cool down etc.
-\paragraph{Start}The module receive equiplet step data to execute
+\paragraph{Start}The module receive Equiplet step data to execute
 \paragraph{Stop}This transition could be used to set the module on its Standby position.
 
 \subsection{Implementation}
-The modules implement the state machine by extending the StateMachine superclass. The state machine class has virtual transition functions that need to be implemented in the module when it extends the superclass.
+The modules implement the State Machine by extending the StateMachine superclass. The State Machine class has virtual transition functions that need to be implemented in the module when it extends the superclass.
 \\\\
 The state of the module can be changed by an changeState method which is implemented in the State Machine.
 
-\newpage
-\section{The equiplet states}
-Due to the nature of the (autonomous) modules in the reconfigurable system the modules can have states that differ from one another. The equiplet node is the central point in which all modules are known. The equiplet itself has two states, one to monitor safety and one to monitor operation. Each state depends on the states of the modules attached to the equiplet in its own
+\section{The Equiplet states}
+Due to the nature of the (autonomous) modules in the reconfigurable system the modules can have states that differ from one another. The Equiplet node is the central point in which all modules are known. The Equiplet itself has two states, one to monitor safety and one to monitor operation. Each state depends on the states of the modules attached to the Equiplet in its own
 way.
 \textbf{The safety state} indicates the level of safety and is equal to the highest actor module state.
-\textbf{The operation state} indicates whether the equiplet is able to fulfill the current task and is equal to the lowest state of the required modules. The required modules are the modules necessary tofulfill the current task as known by the hardware agent.\cite{mast_funcional_design}
+\textbf{The operation state} indicates whether the Equiplet is able to fulfill the current task and is equal to the lowest state of the required modules. The required modules are the modules necessary tofulfill the current task as known by the hardware agent.\cite{mast_funcional_design}
 
-\newpage
 \section{Missing elements}
 \subsection{MAST}
 The current State Machine MAST which the Modules implemented miss some required functionality. These missing have been described here.
 \subsubsection{Emergency button}
-A module has always an emergency button to guarantees safety. When the emergency button is pressed, the software must react on it.
+A module has always an emergency button to guarantees safety. When the emergency button is pressed, the software should react on it.
 \subsubsection{Errors}
-Modules can break down during operation. When this happens it should not receive more tasks from the equiplet to execute. Also its current tasks can not finish.
+Modules can break down during operation. When this happens it should not receive more tasks from the Equiplet to execute. Also its current tasks can not finish.
 \subsubsection{(Re-)configuration}
 The current state-machine hasn't options to switch to an position to (re-)configurate or to switch to a mode of repair. An repair would see more technical information about the hardware executions and want to reconfigure.
 \subsubsection{Lock}
-A human would the option to lock on a state of the state machine such as to lock on safe or standby. Lock will means that it isn't possible to call transitions. When the human lock on safe, it guarantees that the state machine hold the safe position.
+A human would the option to lock on a state of the State Machine such as to lock on safe or standby. Lock will means that it isn't possible to call transitions. When the human lock on safe, it guarantees that the State Machine hold the safe position.
+
 \subsection{Equiplet control}
 \subsubsection{Equiplet node}
-\paragraph{Modules}The equiplet controls one or more modules. All modules implement a State Machine, but the equiplet must react on changes of the State Machine of the modules.
-\paragraph{Equiplet Step}When a module in error, the equiplet should to stop executing its current equiplet step and set it on an aborted state. This option is possible, because all blackboard steps contains states. 
+\paragraph{Modules}The Equiplet controls one or more modules. All modules implement a State Machine, but the Equiplet must react on changes of the State Machine of the modules.
+\paragraph{Equiplet Step}When a module in error, the Equiplet should to stop executing its current Equiplet step and set it on an aborted state. This option is possible, because all blackboard steps contains states. 
 \\Also when a module in error there are two options:
 \begin{enumerate}
-\item Stop executing equiplet steps
-\item Stop executing equiplet steps which needed the module which in error.
+\item Stop executing Equiplet steps
+\item Stop executing Equiplet steps which needed the module which in error.
 \end{enumerate}
-In both cases, the equiplet must react when a module in error
+In both cases, the Equiplet must react when a module in error
 \subsubsection{Equiplet Agent}
-The equiplet agent must know when the equiplet node has all modules in standby. Also when modules has an error, the equiplet should react on it such as to schedule no more.
+The Equiplet agent must know when the Equiplet node has all modules in standby. Also when modules has an error, the Equiplet should react on it such as to schedule no more.
 \subsubsection{Equiplet Step Control}
-Some equiplet has a (mostly)yellow button. This button should be needed to execute equiplet steps by once and execute next by a press on the button.
+Some Equiplet has a (mostly)yellow button. This button should be needed to execute Equiplet steps by once and execute next by a press on the button.
 
 \chapter{Design}
 \section{State Machine included mode}
@@ -290,7 +285,7 @@ Some equiplet has a (mostly)yellow button. This button should be needed to execu
 The State Machine is now renewed whit the new mode part. First the State Machine was controlled by its state. Now the State Machine can be controlled by its state and its mode.
 
 \subsection{Mode change}
-Currently there is no transition between a mode change. Also it is possible to all modes independent of its current mode. Perhaps this should implemented in the future to control the mode changes, but now it isn't necessary.
+Currently there is no transition between a mode change. Also it is possible to change every modes independent of its current mode. Perhaps this should implemented in the future to control the mode changes, but now it isn't necessary.
 
 \subsection{State Machine addition}
 The State Machine add functionality to influence the State Machine. This should be needed by modes. Each mode is designed by possible states and possible transitions.
@@ -299,7 +294,7 @@ The State Machine add functionality to influence the State Machine. This should 
 
 \subsection{Modes}
 \includegraphics[width=1\textwidth]{pictures/modes.png}\\
-The equiplet used different standard modes which influence the State Machine. Each mode discribe the possible states and transitions. All states and transitions which are not in the possibles are non possible. 
+The Equiplet used different standard modes which influence the State Machine. Each mode discribe the possible states and transitions. All states and transitions which are not in the possibles are non possible. 
 
 \subsubsection{Normal}This mode will mean that the State Machine runs in original mode. There are no particularities in this mode.\\\\
 \textbf{Possible (transitions)states:}Normal, Standby, Safe, Setup, Shutdown, Start, Stop\\
@@ -341,32 +336,32 @@ The module create a Module StateMachine called as MOST(MOdule STate machine). Th
 
 \section{Equiplet}
 \subsection{State Machine}
-The equiplet use also a State Machine to control the modules. This State Machine is calles EST(Equiplet STate machine). The EST should be implemented in the ROS node.
+The Equiplet use also a State Machine to control its modules. This State Machine is called EST(Equiplet STate machine). The EST should be implemented in the ROS node.
 
 \subsubsection{States}
-\paragraph{Safe}The equiplet is safe when all modules are also safe.
-\paragraph{Standby}The standby state can be used when the modules of the equiplet in standby state. Just as the module standby state indicate this a ready for run. This state is imported for the equiplet because when the equiplet isn’t ready to run, it isn’t possible to perform scheduled tasks directly. This is designed by the requirement of Erik Puik that an equiplet only is ready to run when all modules are ready to run. When an module isn't ready to run, the equiplet should now allowed to run.
-\paragraph{Normal}This state is used when the equiplet is executing an service step, i.e. the modules of the equiplet are running the equiplet steps. 
+\paragraph{Safe}The Equiplet is safe when all modules are also safe.
+\paragraph{Standby}The standby state can be used when the modules of the Equiplet in standby state. Just as the module standby state indicate this a ready for run. This state is imported for the Equiplet because when the Equiplet isn’t ready to run, it isn’t possible to perform scheduled tasks directly. This is designed by the requirement of Erik Puik that an Equiplet only is ready to run when all modules are ready to run. When an module isn't ready to run, the Equiplet should now allowed to run.
+\paragraph{Normal}This state is used when the Equiplet is executing an service step, i.e. the modules of the Equiplet are running the Equiplet steps. 
 
 \subsubsection{Transitions}
-\paragraph{Setup}Send to all modules of the equiplet a change state to standby command. This transition is finished when all modules are standby.
-\paragraph{Shutdown}Send to all modules of the equiplet a change state to safe. This transition is finished when all modules are safe.
-\paragraph{Start}It is starting a new service step and send the first equiplet step to the module. When the module is normal, this transition finished.
-\paragraph{Stop}It is stopping the service step. When all modules are standby the equiplet change also to standby.
+\paragraph{Setup}Send to all modules of the Equiplet a change state to standby command. This transition is finished when all modules are standby.
+\paragraph{Shutdown}Send to all modules of the Equiplet a change state to safe. This transition is finished when all modules are safe.
+\paragraph{Start}It is starting a new service step and send the first Equiplet step to the module. When the module is normal, this transition finished.
+\paragraph{Stop}It is stopping the service step. When all modules are standby the Equiplet change also to standby.
 
 \subsubsection{Modes}
 \paragraph{Normal}This mode is running when also all modules are normal
 \paragraph{Service}When this mode is activated it set all modules in service.
-\paragraph{Lock}This mode is to lock the equiplet.
-\paragraph{Step}This mode execute an equiplet step by once. It send a new equiplet step to a module when the EquipetStateMachine receive an next step command.
+\paragraph{Lock}This mode is to lock the Equiplet.
+\paragraph{Step}This mode execute an Equiplet step by once. It send a new Equiplet step to a module when the EquipetStateMachine receive an next step command.
 \paragraph{Emergency error}This mode is used when the emergency button is pressed
-\paragraph{Error}The equiplet activate this mode when a module is in error
-\paragraph{Critical Error}The equiplet activate this mode when a module is in critical error.
+\paragraph{Error}The Equiplet activate this mode when a module is in error
+\paragraph{Critical Error}The Equiplet activate this mode when a module is in critical error.
 
 \subsection{State Blackboard}
-To provide equiplet agents from inform of the EST a blackboard should be used called the 'StateBlackboard'. This blackboard should be also used to allow the agent to change the state. The StateBlackboard provide the fallowing collections:
-\paragraph{EquipletState}This collections contain the equiplet states. It provides the 'safety state', the operational state and the equiplet state. The safety- and the operational state provide only a state. The equiplet state provide a equiplet id, state and mode. 
-\paragraph{EquipletCommands}By this blackboard the equiplet state can be changed.
+To provide Equiplet agents from inform of the EST and MOST a blackboard should be used called the 'StateBlackboard'. This blackboard should be also used to allow the agent to change the state. The StateBlackboard provide the fallowing collections:
+\paragraph{EquipletState}This collections contain the Equiplet states. It provides the 'safety state', the operational state and the Equiplet state. The safety- and the operational state provide only a state. The Equiplet state provide a Equiplet id, state and mode. 
+\paragraph{EquipletCommands}By this blackboard the Equiplet state can be changed.
 \paragraph{ModuleStates}This collection contains all module states. A module state contain of a: module id, module state and the module mode.
 
 \subsection{Overview}
@@ -379,7 +374,7 @@ Now the Equiplet contains the fallowing states:
 
 \section{SCADA}
 \includegraphics[width=1\textwidth]{pictures/SCADA.png}
-The E-SCADA runs on the equiplet PC and is a visual representation of everything happening in the equiplet. 
+The E-SCADA runs on the Equiplet PC and is a visual representation of everything happening in the Equiplet. 
 
 \subsubsection{Equiplet information}
 \begin{itemize}
@@ -390,7 +385,7 @@ The E-SCADA runs on the equiplet PC and is a visual representation of everything
 \end{itemize}
 \subsubsection{Equiplet control}
 \begin{itemize}
-\item Make the equiplet safe
+\item Make the Equiplet safe
 \item Lock module
 \item Continue step (step modi)
 \end{itemize}
@@ -422,7 +417,8 @@ The E-SCADA runs on the equiplet PC and is a visual representation of everything
 \begin{wrapfigure}{r}{0.5\textwidth}
     \begin{tikzpicture}
         \begin{interface}[text width=8cm]{ModuleStateMachine}{0,0}
-        \operation{ModuleStateMachine(string moduleName, int equipletID, int moduleID, bool isActor)}
+        \operation{ModuleStateMachine(string moduleName, int EquipletID, int moduleID, bool isActor)}
+        \operation{set\_Error() : void}
         \operation[0]{transitionSetup(ActionSever* as) :     void}
         \operation[0]{transitionShutdown(ActionSever* as) : void}
         \operation[0]{transitionStart(ActionSever* as) : void}
@@ -431,22 +427,25 @@ The E-SCADA runs on the equiplet PC and is a visual representation of everything
     \end{tikzpicture}
 \end{wrapfigure}
 
-MOST is a state machine for modules.
+MOST is a State Machine for modules.
 It is available as interface.
 Each module has to implement it. 
 
 The constructor of the ModuleStateMachine asks four parameters. \\
 \\
 \textbf{\textit{moduleName}} is the name of the module \\
-\textbf{\textit{equipletID}} is the id of the eqiplet the module is attached to \\
+\textbf{\textit{EquipletID}} is the id of the eqiplet the module is attached to \\
 \textbf{\textit{moduleID}} is the id of the module itself \\
-\textbf{\textit{isActor}} is a boolean indicating of the module is an actor or not. \\
+\textbf{\textit{isActor}} is a boolean indicating of the module is an actor or not. This is used by the set\_Error method \\
 
 \noindent
-The MOST implementation consists of four methods.
+The MOST implementation consists of four transition methods.
 Each method represents a transition.
 At the end of a transition the module has to call setSucceeded or setFailed on the given ActionServer.
+\\\\
+The set\_Error method is used to set the Module on an error mode. In influence of it is an actor module change it the mode. Actor modules have a 'critical error mode' and non-actors have a 'error mode'.
 
+\subsubsection{Implementation}
 \begin{figure}[H]
 \begin{lstlisting}[language=c++, frame=single, caption=Sample transition]
 void ModuleImplementation::transitionSetup(
@@ -456,23 +455,28 @@ void ModuleImplementation::transitionSetup(
 
 	//Do groundbreaking initialisation sequence
 
-	as->setSucceeded();
+	if(succeeded)
+		as->setSucceeded();
+	else
+		as->setAborted();
 }
 \end{lstlisting}
 \end{figure}
+The transitions must be implemented in the module. Each transition has an TransitionActionServer parameter. This parameter should be used to set the transition succeeded or not by the setSucceeded or setAborted methods. If the transition finished without a call to the TransitionActionServer the State Machine receive an aborted and the change state should be failed.
 
-\noindent
-The state machine also takes care of registering itself at the equiplet. 
-When a module starts it waits for an equiplet with the ID given in the state machines constructor. 
+\subsection{Equiplet}
+\subsubsection{Module registration}
+The State Machine also takes care of registering itself at the Equiplet. 
+When a module starts it waits for an Equiplet with the ID given in the State Machines constructor. 
 Then it will send a module registration request. 
-The equiplet will then respond with a success or failure. 
+The Equiplet will then respond with a success or failure. 
 If the registration has failed, the module will shut itself down.
 
 \begin{center}
 \begin{sequencediagram}
     \newinst{module}{:Module}
-    \newinst{equiplet}{:Equiplet}
-    \begin{call}{module}{ModuleRegistration(moduleName, moduleID)}{equiplet}{succeed}
+    \newinst{Equiplet}{:Equiplet}
+    \begin{call}{module}{ModuleRegistration(moduleName, moduleID)}{Equiplet}{succeed}
     \end{call}
 \end{sequencediagram}
 \end{center}
@@ -480,24 +484,31 @@ If the registration has failed, the module will shut itself down.
 \noindent
 After registration EST has control over the states and modes of the module.
 
-\subsection{EST}
-EST is the state machine in the equiplet. 
-This state machine has predefined functionality and is implemented for the greatest important parts.
+\subsubsection{EST}
+EST is the State Machine in the Equiplet. 
+This State Machine has predefined functionality and is implemented for the greatest important parts.
 
-EST controls the state and mode of the equiplet.
+EST controls the state and mode of the Equiplet.
 It also manages the state and modes of its attached modules.
 EST provides the module registration functionality.
+The EST is describe of all state or mode changes from the modules.
+
+\paragraph{Transtions}In the transition the Equiplet control its modules as described in the design. Setup to Setup all modules and Shutdown to Shutdown to all modules. Start and Stop are currently not used, but in the future may be used by a Start to wait on the first module which in Normal and Stop to wait on its last module which in Standby.
+
+\paragraph{Modes}When the module change from mode, the Equiplet inherits the mode. This happened when a module change to error or critical error, so the Equiplet change also its mode. Also when the Equiplet change its mode it the module modes will also changed to this mode. This is an easy and basic implementation of the mode.
+
+\paragraph{Blackboard}The StateBlackboard is the blackboard which contains the State Machine data. In this blackboard two containers has been implemented: EquipletState which contain the equiplet\_id, state and mode of the equiplet and EquipletCommands which provide functionality to change the state and mode of the equiplet. The state can changed by a 'disiredState:int' and the mode can be changed by 'disiredMode:int'. The integer stand for the state or the mode.
 
 \subsection{State machine}
-Both EST and MOST are based on the same base state machine. 
+Both EST and MOST are based on the same base State Machine. 
 
-The base state machine provides a shared interface for controlling the state machine.
+The base State Machine provides a shared interface for controlling the State Machine.
 The interface consists of two ROS Actionlib actions for changing the desired state and mode.
 
 \subsubsection{Modes}
-The base state machine also defines some modes. Each essentially allows or disallows certain states and transitions.
+The base State Machine also defines some modes. Each essentially allows or disallows certain states and transitions.
 
-When a change mode action is received and the current state is not allowed in the new mode, the state machine will force the module or equiplet to go to a allowed state.
+When a change mode action is received and the current state is not allowed in the new mode, the State Machine will force the module or Equiplet to go to a allowed state.
 
 \begin{figure}[H]
 \caption{
@@ -509,9 +520,9 @@ When a change mode action is received and the current state is not allowed in th
     \newinst[0]{e}{:Equiplet}
     \newinst[5]{s}{:Statemachine}
     \newinst[1]{m}{:Module}
-    \begin{messcall}{e}{changeMode(CRITICAL\_ERROR)}{s}
+    \begin{messcall}{e}{changeMode(ERROR)}{s}
     \end{messcall}
-    \begin{messcall}{s}{modeChanged(CRITICAL\_ERROR)}{e}
+    \begin{messcall}{s}{modeChanged(ERROR)}{e}
     \end{messcall}
     \begin{call}{s}{transitionStop}{m}{SUCCESS}
     \end{call}
@@ -533,43 +544,25 @@ SCADA in turn uses EST to send commands to the registered modules.
 \end{figure}
 
 \newpage
-\section{Evaluation}
-\subsection{Planning}
-In the beginning an initial planning was made. 
-After a couple of months the initial planning did not corresponds to new developments and has to be renewed.
-Soon the planning became obsolete again and work started to be done on a priority base.
-
-\subsection{Expectations}
-In the end the project turned out to be more difficult than initially expected.
-In the beginning the expectation were that only a state machine must be developed.
-After some discussions and meetings with the project owners the whole project was unexpectedly up-scaled and redefined.
-
-\subsection{Bottlenecks}
-\subsubsection{Information gathering}
-One of the biggest bottlenecks was information gathering.
-It took a lot of time before it was clear what was expected.
-
-\subsubsection{Improper use of project space}
-For the project there was a room reserved where people who work on the project could work quietly.
-However some teachers felt that that room was in ideal place to asses projects involving buzzers from students from earlier years.
-This made the workplace busy and noisy.
-Some days it was so noisy that other workplaces had to be found.
-
-\subsection{Setbacks}
-After a month of gathering information and creating a design that would satisfy all reasonable use cases it became clear that Erik Puik just wanted to see his idea back.
-
-\subsection{Teamwork}
-The teamwork was good. 
-Each of the team-mates was skilled in other areas.
-This resulted in some discussions form now and then.
-
-\section{Conclusion}
-
-\newpage
 \section{Recommendations}
+\paragraph{Emergency Stop}
+Currently the Emergency Stop is implemented in the State Machines, but hasn't been worked out.
+
+\paragraph{Equiplet Agent control}The Equiplet agents should control the state and the modes by the blackboard. This can be needed to set the Equiplet 
+
+\paragraph{Equiplet Agent State Machine}Maybe in the future it should be possible to use a State Machine for the Agents. The State Machine that this document describe is based on hardware states, so probably a new State Machine must be designed for this.
 
 \chapter{Process and planning}
 \section{Project  approach}
+The approach can be set as an step list how we have worked this project.
+\begin{enumerate}
+\item Research the current situation and the requirements
+\item Determine the Requirements
+\item Design the new functionality
+\item Implement the new functionality
+\item Testing
+\item Document the results.
+\end{enumerate}
 
 \newpage
 \section{Planning}
@@ -602,19 +595,36 @@ Period: Block C projectweek 2 + Block D week 1/2
 \item SCADA
 \end{itemize}
 
-\section{Calculation hours and costs}
-
 \newpage
-\section{Project evaluation}
+\section{Project Evaluation}
+\subsection{Planning}
+In the beginning an initial planning was made. 
+After a couple of months the initial planning did not corresponds to new developments and has to be renewed.
+Soon the planning became obsolete again and work started to be done on a priority base.
 
-\chapter{Reflection}
-\section{Reflection technical competences}
+\subsection{Expectations}
+In the end the project turned out to be more difficult than initially expected.
+In the beginning the expectation were that only a State Machine must be developed.
+After some discussions and meetings with the project owners the whole project was unexpectedly up-scaled and redefined.
 
-\newpage
-\section{Reflection professional competences}
+\subsection{Bottlenecks}
+\subsubsection{Information gathering}
+One of the biggest bottlenecks was information gathering.
+It took a lot of time before it was clear what was expected.
 
-\newpage
-\section{Profile sketch}
+\subsubsection{Improper use of project space}
+For the project there was a room reserved where people who work on the project could work quietly.
+However some teachers felt that that room was in ideal place to asses projects involving buzzers from students from earlier years.
+This made the workplace busy and noisy.
+Some days it was so noisy that other workplaces had to be found.
+
+\subsection{Setbacks}
+After a month of gathering information and creating a design that would satisfy all reasonable use cases it became clear that Erik Puik just wanted to see his idea back.
+
+\subsection{Teamwork}
+The teamwork was good. 
+Each of the team-mates was skilled in other areas.
+This resulted in some discussions form now and then.
 
 \chapter{Abbreviations and concepts}
 bron:[Project Transfer Document] Overview]
@@ -626,20 +636,16 @@ order to meet its design objectives”.”[27]
 \subsubsection{Mas}
 “A multi-agent system (MAS) is a system composed of multiple interacting intelligent agents within an environment. Multi-agent systems can be used to solve problems that are difficult or impossible for an individual agent or a monolithic system to solve. Intelligence may include some methodic, functional, procedural or algorithmic search, find and processing approach.”[30]
 \subsubsection{Grid}
-A grid is a controlled group of equiplets.
+A grid is a controlled group of Equiplets.
 \subsubsection{Equiplet}
-An Equiplet is a product, the hardware, the "generic" modular machine (the HUniplacer is a prototype "instance" of an Equiplet type machine). An equiplet consist of one or more hardware parts which he is able to perform tasks.
+An Equiplet is a product, the hardware, the "generic" modular machine (the HUniplacer is a prototype "instance" of an Equiplet type machine). An Equiplet consist of one or more hardware parts which he is able to perform tasks.
 \subsubsection{Module}
-An module control some hardware parts of the equiplet. It is an subset of hardware devices of the equiplet.
+An module control some hardware parts of the Equiplet. It is an subset of hardware devices of the Equiplet.
 \subsubsection{Device}
 An device is an hardware element which produce information(sensors) or is able to execute tasks(actors).
 \subsubsection{Blackboard}
 bron:[Technical Design] Blackboard system
 A blackboard is a structure for saving data and can be implemented as a database. It can also be used as a communication medium (e.g. a component submits a message to the blackboard and another component reads the submitted message) or as a knowledge sharing cent
-
-\chapter{Sources}
-
-\chapter{Attachments}
 
 \bibliographystyle{plain}
 \bibliography{references}
