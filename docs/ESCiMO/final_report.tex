@@ -135,9 +135,9 @@ To operate an equiplet the operator has to be able to see what is going on with 
 \subsubsection{Modes as additional of the State Machine}
 Mode is an additional of the State Machine to implement the missing elements.
 Currently the State Machine contains of states and transitions. A mode is a new dimension at the State Machine. In this case the State Machine react depended on its state and also on its mode.
-\paragraph{Stop}In this mode the modules has lost the devices control and it is possible to show the State Machine as safe.
-\paragraph{Error Mode}The error is intended for non-actor modules which in error. The State Machine may not allowed to startup. When a module in error and the State Machine in Normal, the module must try to finish it task and go to standby by stop.
-\paragraph{Critical Error Mode}The Critical error mode is intended for actor modules which in error. When an actor module in error, the module should stop when in normal and shutdown when in standby.
+\paragraph{Emergency Stop}In this mode the modules has lost the devices control and it is possible to show the State Machine as safe.
+\paragraph{Error}The error is intended for non-actor modules which in error. The State Machine may not allowed to startup. When a module in error and the State Machine in Normal, the module must try to finish it task and go to standby by stop.
+\paragraph{Critical Error}The Critical error mode is intended for actor modules which in error. When an actor module in error, the module should stop when in normal and shutdown when in standby.
 \paragraph{Service}The Service mode will be used to add configuration calls to the module. In this mode the repairer should be used this calls.
 
 \subsection{Equiplet additions}
@@ -415,28 +415,6 @@ The E-SCADA runs on the equiplet PC and is a visual representation of everything
 \item Service state
 \end{itemize}
 
-\chapter{Realization}
-\section{Global phasing}
-From the beginning of our project we had to go trough some phases.
-
-\subsection{Research}
-The first phase was about gathering information.
-There was no documentation available and our assignment was not clear.
-
-In this phase we tried to gather as much as possible information form Erik Puik and Danliel Telgren.
-With this information we tried to create a global design.
-After a number of redesigns we got a design that was approved.
-
-\subsection{MOST}
-
-
-\subsection{EST}
-
-\subsection{SCADA}
-
-\newpage
-\section{Realization pre-phase/milestones}
-
 \chapter{Final product}
 \section{Result}
 \subsection{MOST}
@@ -555,7 +533,13 @@ SCADA in turn uses EST to send commands to the registered modules.
 \end{figure}
 
 \newpage
-\section{Evaluation}
+\section{Recommendations}
+
+\chapter{Process and planning}
+\section{planning}
+
+\newpage
+\section{Project Evaluation}
 \subsection{Planning}
 In the beginning an initial planning was made. 
 After a couple of months the initial planning did not corresponds to new developments and has to be renewed.
@@ -584,22 +568,6 @@ After a month of gathering information and creating a design that would satisfy 
 The teamwork was good. 
 Each of the team-mates was skilled in other areas.
 This resulted in some discussions form now and then.
-
-\section{Conclusion}
-
-\newpage
-\section{Recommendations}
-
-\chapter{Process and planning}
-\section{Project  approach}
-
-\newpage
-\section{planning}
-
-\section{Calculation hours and costs}
-
-\newpage
-\section{Project evaluation}
 
 \chapter{Reflection}
 \section{Reflection technical competences}
