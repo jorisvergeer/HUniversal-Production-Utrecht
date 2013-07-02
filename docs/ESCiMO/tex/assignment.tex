@@ -1,0 +1,92 @@
+\chapter{Assignment}
+\section{Problem description}
+\subsection{Safety}
+Equiplets are autonomous machines. 
+They are part of a large production platform where multiple entities can request actions form the Equiplet. These requests can be received at any time. Even when an operator is working on an Equiplet. When an operator is working on an Equiplet, it has to be absolutely safe.
+Modules must be powered off and have to be guarantee that they will not power up while the operator is still nearby.
+To prevent this a safety mechanism has to be build.
+\subsection{Synchronisation}
+When instructions require actions from multiple modules both modules have to be ready.
+Modules are not guaranteed to be ready at the same time. Some modules require initialisation  and/or calibration procedures while other modules are immediately ready. 
+To prevent instructions to be send to modules which are not ready yet a synchronisation mechanism has to be build
+\subsection{Error handling}
+Modules can break down during operation. When this happens the hardware must abort its current instruction and stop receiving new instructions until the module is fixed.
+\subsection{Human interaction}
+Some times a human want to have control of the hardware. There are different options for humans to influenced the system such as an emergency button or by an step button to execute tasks by press on a button.
+
+\subsection{SCADA}
+To operate an Equiplet the operator has to be able to see what is going on with the Equiplet and modules. He also want an interface where he can perform minimal interaction with the Equiplet. Therefore also a SCADA system has to be developed.
+
+\section{Goals}
+\begin{itemize}
+\item Research current State Machine of the Agile/Grid Manufacturing project
+\item Improve current State Machine with missing elements
+\item Implements designed State Machine in Agile/Grid manufacturing project 
+\item Design and implement SCADA of the Equiplet
+\end{itemize}
+
+\newpage
+\section{Requirements and conditions}
+\subsection{Module State Machine}
+The State Machine contains of states and modes. Between the states are transitions. A module runs in depended of its state and its mode.
+
+\subsubsection{States}
+\paragraph{Safe}A module must indicate when it is safe, i.e. no power on it.
+\paragraph{Standby}A module must indicate when it is standby, i.e. read to run directly a task. Calibration etc. should be done.
+\paragraph{Normal}A module must indicate when it is running by a state called as 'Normal'. Running means it is executing a task.
+
+\subsubsection{Transitions}
+The module are only allowed to change its state by transitions. A transition is a state between two other states. In the transition state the functionality can be executed before reaching the next state.
+\paragraph{Setup}Setup set the State Machine from safe to standby.
+\paragraph{Shutdown}Shutdown set the State Machine from standby to safe.
+\paragraph{Start}Start set the State Machine from standby to normal.
+\paragraph{Stop}Stop set the State Machine from normal to standby.
+
+\subsubsection{Modes}
+\paragraph{Emergency Stop}In this mode the modules has lost the devices control and it is possible to show the State Machine as safe.
+\paragraph{Error}The error is intended for non-actor modules which in error. The State Machine may not allowed to setup. When a module in error and the State Machine in Normal, the module must try to finish it task and go to standby by stop.
+\paragraph{Critical Error}The Critical error mode is intended for actor modules which in error. When an actor module in error, the module should stop when in normal and shutdown when in standby.
+\paragraph{Service}The Service mode will be used to add configuration calls to the module. In this mode the repairer should be used this calls.
+
+\subsection{Equiplet}
+\subsubsection{Module control}
+\paragraph{Emergency Stop}
+When the emergency button is pressed, the Equiplet can't execute Equiplet steps, because the hardware of the modules are offline.
+\paragraph{Module in Error}
+When a module in error (this means a non-actor module) the other modules must try to finish its task if running. It is possible to run new tasks without the module which in error, but this is not usual said by Erik Puik. He prefer that an Equiplet only runs tasks which use all its modules, so the Equiplet will always full use its components(modules) and is attractive to the market. In this case we can say when an module in error, the Equiplet is also in error.
+\paragraph{Module in Critical Error}
+When a module in critical error (this means a actor module) the other modules must abort its task and stop/shutdown. In this case an actor module constitutes a risk so the modules of the Equiplet must shutdown to safe.
+\paragraph{Lock}The Equiplet should lock its modules in safe or standby, i.e. its not allowed for the module State Machine to change from state.
+
+\subsubsection{Opportunities}
+\paragraph{Step control}The Equiplet should execute exeplet steps by once named as 'Step control'.
+\paragraph{Service}The Equiplet should be set in Service, so an repairer are allowed to (re)configure or to get hardware parameters of the modules.
+\paragraph{Module control from Agent} Equiplet agents should be able to monitor the module State Machines. Also the Equiplet Agent should be able to change the State Machine parameters of the modules.
+
+\newpage
+\section{Final products}
+\subsection{State Machine}
+Our first product is a State Machine for modules and Equiplets. 
+
+In addition to states, there are also modes.
+A mode defines which states and transitions are allowed.
+
+\subsubsection{MOdule STatemachine (MOST)}
+The module State Machine is an expansion of MAST with modes.
+The State Machine is our solution for the error handling, safety guarantee and synchronisation.
+
+\subsubsection{Equiplet STatemachine (EST)}
+The EST variant of the State Machine is implemented in the Equiplet.
+It has additional functionality for managing registered MOST State Machines and also include modes.
+
+\subsection{SCADA}
+The SCADA gives operators insight into the Equiplet.
+It shows the current state and modes of the Equiplet and its modules.
+It also gives the operator some control over the Equiplet.
+In the SCADA he can change the mode and state of the Equiplet and its modules.
+
+\subsection{Implementation}
+Finally we will implement the State Machines in existing modules and Equiplets.
+
+\subsection{Documentation}
+\paragraph{Project Transfer Document}We also make a Project Transfer Document with the parts of our design and describe what is done and what remains to be done.
