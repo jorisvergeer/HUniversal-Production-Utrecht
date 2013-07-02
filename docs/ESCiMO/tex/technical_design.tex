@@ -129,3 +129,27 @@ SCADA in turn uses EST to send commands to the registered modules.
 \includegraphics[scale=0.4]{scada.png}
 \end{center}
 \end{figure}
+
+\section{ROS}
+\subsection{Comunication}
+ROS is used for inter process calls and communication between nodes.
+
+\subsubsection{Module registration}
+When a module is started it tries to register itself in the equiplet node.
+The equiplet node only accepts the module when the equiplet is safe.
+A module is also rejected if the equiplet already has a module with the same id.
+
+For the registration the equiplet node advertises a service. 
+The service is called regiset\_module and is accessible in the equplet nodes namespace. 
+(eg. equiplet\_1/register\_module)
+The register\_module service has sends the name and the id of the module to the equiplet.
+
+After the module has registered itself the module registry in the equiplet node creates a ModuleProxy. 
+the ModuleProxy links to the change\_state and change\_mode actions of the module.
+
+\subsubsection{Change states and modes}
+To change the state or mode of a module the equiplet has to search for the module in the ModuleRegistry. 
+This registry holds all the registered modules and their proxies. 
+Using the proxies the mode and state of the modules can be changed.
+
+The proxies contacts the actionservers in the module which in their turn call their own actioservers for the actual transitions.
